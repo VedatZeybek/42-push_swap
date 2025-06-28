@@ -6,4 +6,4 @@ CFLAGS = -Wall -Wextra -Werror
 
 
 all:
-	$(CC) $(CFLAGS) $(SRC) -o $(NAME)
+	$(CC)  $(SRC) -o $(NAME)

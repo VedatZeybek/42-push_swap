@@ -13,6 +13,17 @@ typedef struct s_stack
 	int	top;
 } t_stack;
 
+int	is_empty(t_stack *stack)
+{
+	return (stack->top == -1);
+}
+
+int is_full(t_stack *stack)
+{
+	if (stack->top == stack->size -1)
+		return (1);
+	return (0);
+}
 
 t_stack	*init_stack(int *data, int size)
 {
@@ -23,42 +34,35 @@ t_stack	*init_stack(int *data, int size)
 	if (!stack)
 		return (NULL);
 	stack->data = malloc(sizeof(int) * size); 
-	if (!data)
+	if (!stack->data)
 	{
 		free(stack);
 		return (NULL);
 	}
 	i = 0;
-	while (i < size)
+	if (data)
 	{
-		stack->data[i] = data[i];
-		i++;
+		while (i < size)
+		{
+			stack->data[i] = data[i];
+			i++;
+		}
+		stack->top = size - 1;
 	}
-	stack->top = size - 1;
+	else
+	{
+		stack->top = -1;
+	}
 	stack->size = size;
 	return(stack);
-}
-
-int	is_empty(t_stack *stack)
-{
-	if (stack->size == 0)
-		return (1);
-	return (0);
-}
-
-int is_full(t_stack *stack)
-{
-	if (stack->top == stack->size -1)
-		return (1);
-	return (0);
 }
 
 int	push_to_stack(t_stack *stack, int value)
 {
 	if (!is_full(stack))
 	{
-		stack->data[stack->top + 1] = value; 
 		stack->top++;
+		stack->data[stack->top] = value; 
 		return (1);
 	}
 	return (0);
@@ -71,7 +75,7 @@ int	pop_from_stack(t_stack *stack)
 	if (!is_empty(stack))
 	{
 		value =  stack->data[stack->top];
-		stack->data[stack->top] = '\0';
+		stack->data[stack->top] = 0;
 		stack->top--;
 		return (value);
 	}
@@ -243,40 +247,89 @@ int	*parse_arguments(int **result, int argc, char **argv)
 		return (NULL);
 	while (i < argc - 1)
 	{
-		(*result)[i] = atoi(argv[i + 1]);
+		(*result)[argc - 2 - i] = atoi(argv[i + 1]);
 		i++;
 	}
 	return (*result);
 }
 
-void	sort_function(t_stack stack_a, t_stack stack_b)
+void	sort_threesize_stack(t_stack *stack_a)
 {
-	
+	int top;
+	int mid;
+	int bot;
+
+	top = stack_a->data[2];
+	mid = stack_a->data[1];
+	bot = stack_a->data[0];
+	if (stack_a->size == 2 && top > mid)
+		sa(stack_a);
+	if (stack_a->size != 3)
+		return ;
+	if (top > mid && mid > bot && top > bot) //3 2 1
+	{
+		sa(stack_a);
+		rra(stack_a);
+	}
+	else if (top > mid && mid < bot && top > bot) //3 1 2
+		ra(stack_a);
+	else if (top > mid && mid < bot) //2 1 3
+		sa(stack_a);
+	else if (top < mid && mid > bot && top > bot) //2 3 1
+		rra(stack_a);
+	else if (top < mid && mid > bot) //1 3 2
+	{
+		sa(stack_a);
+		ra(stack_a);
+	}
 }
 
-int main(int argc, char **argv)
+// void	sort_algorithm(t_stack *a, t_stack *b)
+// {
+// 	pb(a, b);
+// 	pb(a, b);
+
+// 	if (b->data[b->top] < b->data[b->top - 1])
+// 		pb(a, b);
+// 	else
+// 	{
+// 		rb(b);
+// 		pb(a, b);
+// 	}
+
+// }
+
+void print_stack(t_stack *stack, char name)
 {
+	printf("stack %c:\n", name);
+	for (int i = stack->top; i >= 0; i--)
+		printf("%d\n", stack->data[i]);
+}
+
+
+int main(int argc, char **argv) {
 	int		*data_a;
-	//int		*data_b = NULL;
+	int		*data_b;
 	t_stack	*stack_a;
-	//t_stack	*stack_b;
-	if (argc < 2)
-	{
-		printf("Unsufficient Argument\n");
+	t_stack	*stack_b;
+	
+	if (argc < 2) {
+		printf("Insufficient Argument\n");
 		return (1);
 	}
+	
 	data_a = parse_arguments(&data_a, argc, argv);
-	for (int i = 0; i  < argc - 1 ; i++)
-		printf("%d\n",data_a[i]);
-	stack_a = init_stack(data_a, argc - 1);
-	//stack_b = init_stack(data_b, argc - 1);
-	printf("------------------------\n");
-	int	j = 0;
-	while (j < argc - 1)
-	{
-		printf("%d\n", stack_a->data[j]);
-		j++;
-	}
-	//printf("stack b: %d \n", stack_b->data[0]);
-
+	data_b = NULL;  // Stack B için data gerekmez
+	
+	stack_a = init_stack(data_a, argc - 1);  // Dolu stack
+	stack_b = init_stack(NULL, argc - 1);    // Boş stack
+	
+	printf("==========BEFORE===========\n");
+	print_stack(stack_a, 'a');
+	print_stack(stack_b, 'b');
+	
+	printf("\n==========AFTER PB===========\n");
+	pb(stack_a, stack_b);
+	print_stack(stack_a, 'a');
+	print_stack(stack_b, 'b');
 }
