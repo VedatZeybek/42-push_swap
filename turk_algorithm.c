@@ -38,39 +38,28 @@ int find_max_index(t_stack *stack) {
 // Stack B'de value için target pozisyonu bul - DÜZELTILDI
 int find_target_in_b(t_stack *b, int value) {
     if (b->top == -1) 
-        return 0; // B boşsa en üste (index 0) yerleştir
+        return 0; // B boşsa index 0'a yerleştir
     
     int target_index = -1;
-    int best_smaller = INT_MIN;
+    int best_bigger = INT_MAX;
     
-    // B'de value'dan küçük olan en büyük sayıyı bul
+    // B'de value'dan BÜYÜK olan en küçük sayıyı bul
     for (int i = b->top; i >= 0; i--) {
-        if (b->data[i] < value && b->data[i] > best_smaller) {
-            best_smaller = b->data[i];
+        if (b->data[i] > value && b->data[i] < best_bigger) {
+            best_bigger = b->data[i];
             target_index = i;
         }
     }
     
-    // Eğer value'dan küçük sayı yoksa, en büyüğün üstüne yerleştir
     if (target_index == -1) {
-        target_index = find_max_index(b);
-        // Max'ın üstüne yerleştirmek için bir pozisyon yukarı
-        if (target_index < b->top) {
-            target_index++;
-        } else {
-            target_index = 0; // Wrap around
-        }
-    } else {
-        // Küçük olan sayının üstüne yerleştir
-        if (target_index < b->top) {
-            target_index++;
-        } else {
-            target_index = 0;
-        }
+        // Hepsi value'dan küçükse en büyük
+        return (0);
     }
     
-    return target_index;
+    // Büyük olanın altına yerleştir
+    return target_index + 1;
 }
+
 
 // Stack A'da value için target pozisyonu bul - DÜZELTILDI
 int find_target_in_a(t_stack *a, int value) {

@@ -1,6 +1,7 @@
 //find min index
+#include "push_swap.h"
 
-int	find_min_index(stack *a)
+int	find_min_index(t_stack *a)
 {
 	int i;
 	int	result;
@@ -21,7 +22,7 @@ int	find_min_index(stack *a)
 
 //find max index
 
-int find_max_index(stack *a)
+int find_max_index(t_stack *a)
 {
 	int	i;
 	int result;
@@ -41,16 +42,21 @@ int find_max_index(stack *a)
 
 //find target for value in B stack
 // B boşsa en üste (index 0) yerleştir
-// Eğer value'dan küçük sayı yoksa, en büyüğün üstüne yerleştir
-// Else Küçük olan sayının üstüne yerleştir
+// Value den büyük, en küçük sayının üstüne yerleştir.
+//Value den büyük sayı yoksa en alta koy.
 
-int	find_target_b()
+int	find_position_in_b()
+{
 
+}
 
 
 
 //find target for value in A stack
-
+int	find_position_in_a()
+{
+	
+}
 
 
 
