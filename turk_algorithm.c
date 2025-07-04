@@ -125,7 +125,7 @@ int is_sorted(t_stack *a) {
 // Rotation işlemi - DÜZELTILDI
 void rotate_to_top(t_stack *stack, int target_index, char stack_name) {
     if (stack->top == -1 || target_index == stack->top) 
-        return; // Zaten tepede
+        return ;
     
     int stack_size = stack->top + 1;
     int cost_up = (stack->top - target_index) % stack_size;
@@ -150,47 +150,37 @@ void rotate_to_top(t_stack *stack, int target_index, char stack_name) {
     }
 }
 
-// Optimal push işlemi
 void execute_optimal_push(t_stack *a, t_stack *b, int a_index) {
     int target_b = find_target_in_b(b, a->data[a_index]);
     
-    // B'yi doğru pozisyona getir
     if (b->top >= 0) {
         rotate_to_top(b, target_b, 'b');
     }
     
-    // A'yı doğru pozisyona getir
     rotate_to_top(a, a_index, 'a');
     
-    // Push yap
     pb(a, b);
 }
 
-// Ana Turk algoritması - DÜZELTILDI
 void turk_algorithm(t_stack *a, t_stack *b) {
-    // Eğer zaten sıralıysa çık
     if (is_sorted(a))
         return;
     
-    // Edge case: 2 eleman varsa
     if (a->top == 1) {
         if (a->data[1] > a->data[0])
             sa(a);
         return;
     }
     
-    // Edge case: 3 eleman varsa
     if (a->top == 2) {
         sort_threesize_stack(a);
         return;
     }
     
-    // İlk iki elemanı B'ye gönder
     pb(a, b);
     if (a->top >= 0)
         pb(a, b);
     
-    // B'deki elemanları sırala (büyük üstte)
     if (b->top >= 1 && b->data[b->top] < b->data[b->top-1])
         sb(b);
     

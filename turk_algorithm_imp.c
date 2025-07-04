@@ -122,7 +122,6 @@ int rotation_cost(t_stack *stack, int target_index)
 		return (cost_from_down);
 }
 
-
 //push cost calculation
 // Basit toplam maliyet (optimizasyon olmadan)
 
@@ -212,12 +211,11 @@ void	rotate_to_top(t_stack *stack, int target_index, char stack_name)
 		while (i < cost_from_up)
 		{
 			if (stack_name == 'a')
-				ra(stack);
+				rra(stack);
 			else
-				rb(stack);
+				rrb(stack);
 		}
 }
-
 
 
 //optimal push
@@ -225,9 +223,16 @@ void	rotate_to_top(t_stack *stack, int target_index, char stack_name)
 // A'yı doğru pozisyona getir
 // Push yap
 
+void	execute_push(t_stack *a, t_stack *b, int cheapest_index)
+{
+	int	target_b;
 
-
-
+	target_b = find_target_in_b(b, a->data[cheapest_index]);
+	//control eksik
+	rotate_to_top(b, target_b, 'b');
+	rotate_to_top(a, cheapest_index, 'a');
+	pb(a, b);
+}
 
 //turk_algorithm
 // Eğer zaten sıralıysa çık
@@ -240,3 +245,33 @@ void	rotate_to_top(t_stack *stack, int target_index, char stack_name)
 // B'den A'ya geri al
 // Son olarak minimum'u en üste getir
 
+int	control_before_alogirthm(t_stack *a, t_stack *b)
+{
+	if (is_ordered(a))
+		return (1);
+	if (a->top == 1)
+	{
+		if (a->data[1] > a->data[0])
+			sa(a);
+		return (1);
+	}
+	if (a->top == 2)
+	{
+		sort_threesize_stack(a);
+		return (1);
+	}
+	return (0);
+}
+
+void	turk_algorithm(t_stack *a, t_stack *b)
+{
+	int	cheapest_index;
+
+	if (control_before_alogirthm(a, b))
+		return ;
+	pb(a, b);
+	pb(a, b);
+	if (b->data[b->top] < b->data[b->top - 1])
+		sb(b);
+	
+}
