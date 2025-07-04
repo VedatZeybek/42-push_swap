@@ -505,7 +505,14 @@ int main(int argc, char **argv) {
 	stack_a = init_stack(data_a, argc - 1);
 	stack_b = init_stack(NULL, argc - 1);
 	
+	int num = find_position_in_b(stack_a, 7);
+	int num2 = find_position_in_a(stack_a, 7);
+
+	printf("positioni: %d\n", num);
+	printf("positioni: %d\n", num2);
+
 	print_stacks_with_title(stack_a, stack_b, "BEFORE");
+
 	turk_algorithm(stack_a, stack_b);
 	
 	print_stacks_with_title(stack_a, stack_b, "AFTER");

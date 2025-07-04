@@ -28,18 +28,20 @@ int	*parse_arguments(int **result, int argc, char **argv);
 void	sort_threesize_stack(t_stack *stack_a);
 void print_stack(t_stack *stack, char name);
 
-
 int find_min_index(t_stack *stack);
 int find_max_index(t_stack *stack);
-int find_target_in_b(t_stack *b, int value);
-int find_target_in_a(t_stack *a, int value);
-int calculate_rotation_cost(t_stack *stack, int index);
-int calculate_push_cost(t_stack *a, t_stack *b, int a_index);
+int find_position_in_b(t_stack *b, int value);
+int find_position_in_a(t_stack *a, int value);
+int rotation_cost(t_stack *stack, int target_index);
+int push_cost_optimized(t_stack *a, t_stack *b, int a_index);
 int find_cheapest_move(t_stack *a, t_stack *b);
-int is_sorted(t_stack *a);
-void rotate_to_top(t_stack *stack, int index, char stack_name);
-void execute_optimal_push(t_stack *a, t_stack *b, int a_index);
-void turk_algorithm(t_stack *a, t_stack *b);
+int is_ordered(t_stack *stack);
+void rotate_to_top_optimized(t_stack *a, t_stack *b, int target_a, int target_b);
+void rotate_to_top(t_stack *stack, int target_index, char stack_name);
+void execute_push_optimized(t_stack *a, t_stack *b, int cheapest_index);
+int should_use_ss(t_stack *a, t_stack *b);
+int control_before_algorithm(t_stack *a, t_stack *b);
+void turk_algorithm_optimized(t_stack *a, t_stack *b);
 
 
 

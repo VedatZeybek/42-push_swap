@@ -57,7 +57,7 @@ int	find_position_in_b(t_stack *b, int value)
 	target_value = INT_MAX;
 	i = b->top;
 	target_index = -1;
-	while (i > 0)
+	while (i >= 0)
 	{
 		if (b->data[i] > value && b->data[i] < target_value)
 		{
@@ -85,7 +85,7 @@ int	find_position_in_a(t_stack *a, int value)
 	i = a->top;
 	target_index = -1;
 	target_value = INT_MAX;
-	while (i > 0)
+	while (i >= 0)
 	{
 		if (a->data[i] > value && a->data[i] < target_value)
 		{
@@ -94,11 +94,12 @@ int	find_position_in_a(t_stack *a, int value)
 		}
 		i--;
 	}
-    if (target_index != -1) {
-        return target_index;
-    } else {
-        return find_min_index(a);
-    }
+	if (target_index != -1) 
+	{
+		return target_index;
+	} 
+	return find_min_index(a);
+	
 }
 
 
@@ -229,8 +230,8 @@ void	execute_push(t_stack *a, t_stack *b, int cheapest_index)
 
 	target_b = find_position_in_b(b, a->data[cheapest_index]);
 	//control eksik
-    if (b->top >= 0) {
-         rotate_to_top(b, target_b, 'b');
+	if (b->top >= 0) {
+		rotate_to_top(b, target_b, 'b');
 	}
 	rotate_to_top(a, cheapest_index, 'a');
 	pb(a, b);
@@ -249,8 +250,9 @@ void	execute_push(t_stack *a, t_stack *b, int cheapest_index)
 
 int	control_before_alogirthm(t_stack *a, t_stack *b)
 {
-	if (is_ordered(a))
+	if (is_ordered(a) || a->top == 0)
 		return (1);
+
 	if (a->top == 1)
 	{
 		if (a->data[1] > a->data[0])
@@ -273,7 +275,8 @@ void	turk_algorithm(t_stack *a, t_stack *b)
 	if (control_before_alogirthm(a, b))
 		return ;
 	pb(a, b);
-	pb(a, b);
+	if (a->top > 2)
+		pb(a, b);
 	if (b->data[b->top] < b->data[b->top - 1])
 		sb(b);
 	while (a->top > 2)
@@ -282,11 +285,11 @@ void	turk_algorithm(t_stack *a, t_stack *b)
 		execute_push(a, b, cheapest_index);
 	}
 	sort_threesize_stack(a);
-    while (b->top >= 0) {
-        int target_a = find_position_in_a(a, b->data[b->top]);
-        rotate_to_top(a, target_a, 'a');
-        pa(a, b);
-    }
+	while (b->top >= 0) {
+		int target_a = find_position_in_a(a, b->data[b->top]);
+		rotate_to_top(a, target_a, 'a');
+		pa(a, b);
+	}
 	min_index = find_min_index(a);
-    rotate_to_top(a, min_index, 'a');
+	rotate_to_top(a, min_index, 'a');
 }
