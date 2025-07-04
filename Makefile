@@ -1,5 +1,5 @@
 NAME = push_swap
-SRC = push_swap.c  turk_algorithm.c
+SRC = *.c
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror

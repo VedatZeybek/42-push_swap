@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include "push_swap.h"
+#include "push_swap_2.h"
 
 int	is_empty(t_stack *stack)
 {

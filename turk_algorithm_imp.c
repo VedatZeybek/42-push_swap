@@ -1,5 +1,4 @@
-//find min index
-#include "push_swap.h"
+#include "push_swap_2.h"
 #include <limits.h>
 
 int	find_min_index(t_stack *a)
@@ -11,9 +10,9 @@ int	find_min_index(t_stack *a)
 		return (-1);
 	i = 0;
 	result = 0;
-	while (i < a->top)
+	while (i <= a->top)
 	{
-		if (a->data[result] < a->data[i])
+		if (a->data[result] > a->data[i])
 			result = i;
 		i++;
 	}
@@ -32,10 +31,11 @@ int find_max_index(t_stack *a)
 		return (-1);
 	i = 0;
 	result = 0;
-	while (i < a->top)
+	while (i <= a->top)
 	{
 		if (a->data[result] < a->data[i])
 			result = i;
+		i++;
 	}
 	return (result);
 }
@@ -68,8 +68,7 @@ int	find_position_in_b(t_stack *b, int value)
 	}
 	if (target_index == -1)
 		return (find_max_index(b));
-	else
-		return (target_index);
+	return (target_index);
 }
 
 
@@ -84,7 +83,7 @@ int	find_position_in_a(t_stack *a, int value)
 	if (a->top == -1)
 		return (-1);
 	i = a->top;
-	target_index = 0;
+	target_index = -1;
 	target_value = INT_MAX;
 	while (i > 0)
 	{
@@ -205,18 +204,19 @@ void	rotate_to_top(t_stack *stack, int target_index, char stack_name)
 				ra(stack);
 			else
 				rb(stack);
+			i++;
 		}
 	}
 	else
-		while (i < cost_from_up)
+		while (i < cost_from_down)
 		{
 			if (stack_name == 'a')
 				rra(stack);
 			else
 				rrb(stack);
+			i++;
 		}
 }
-
 
 //optimal push
 // B'yi doğru pozisyona getir
@@ -227,9 +227,11 @@ void	execute_push(t_stack *a, t_stack *b, int cheapest_index)
 {
 	int	target_b;
 
-	target_b = find_target_in_b(b, a->data[cheapest_index]);
+	target_b = find_position_in_b(b, a->data[cheapest_index]);
 	//control eksik
-	rotate_to_top(b, target_b, 'b');
+    if (b->top >= 0) {
+         rotate_to_top(b, target_b, 'b');
+	}
 	rotate_to_top(a, cheapest_index, 'a');
 	pb(a, b);
 }
@@ -266,6 +268,7 @@ int	control_before_alogirthm(t_stack *a, t_stack *b)
 void	turk_algorithm(t_stack *a, t_stack *b)
 {
 	int	cheapest_index;
+	int min_index;
 
 	if (control_before_alogirthm(a, b))
 		return ;
@@ -273,5 +276,17 @@ void	turk_algorithm(t_stack *a, t_stack *b)
 	pb(a, b);
 	if (b->data[b->top] < b->data[b->top - 1])
 		sb(b);
-	
+	while (a->top > 2)
+	{
+		cheapest_index = find_cheapest_move(a, b);
+		execute_push(a, b, cheapest_index);
+	}
+	sort_threesize_stack(a);
+    while (b->top >= 0) {
+        int target_a = find_position_in_a(a, b->data[b->top]);
+        rotate_to_top(a, target_a, 'a');
+        pa(a, b);
+    }
+	min_index = find_min_index(a);
+    rotate_to_top(a, min_index, 'a');
 }
