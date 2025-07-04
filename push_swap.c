@@ -325,39 +325,6 @@ void sort_threesize_stack(t_stack *stack_a) {
     // top < mid && mid < bot durumu zaten sıralı (hiçbir şey yapma)
 }
 
-int	is_min(t_stack *a)
-{
-	int	i;
-
-	i = 0;
-	while (i < a->top)
-	{
-		if (a->data[i] < a->data[a->top])
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
-void	sort_algorithm(t_stack *a, t_stack *b)
-{
-	pb(a, b);
-	pb(a, b);
-
-	if (b->data[b->top] < b->data[b->top - 1])
-	{
-		sb(b);
-		pb(a, b);
-	}
-	else
-	{
-		rb(b);
-		pb(a, b);
-	}
-	if (is_min(a))
-		pb(a, b);
-}
-
 void print_stack(t_stack *stack, char name)
 {
 	printf("stack %c:\n", name);

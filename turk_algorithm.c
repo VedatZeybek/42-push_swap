@@ -1,16 +1,14 @@
 #include "push_swap.h"
 #include <limits.h>
 
-// Turk Algorithm Helper Functions - DÜZELTILMIŞ VERSIYON
 
-// Stack'te minimum değerin indexini bul
 int find_min_index(t_stack *stack) {
     if (stack->top == -1) return -1;
     
-    int min_val = stack->data[stack->top];  // En üstten başla
+    int min_val = stack->data[stack->top]; 
     int min_index = stack->top;
     
-    for (int i = stack->top - 1; i >= 0; i--) {  // Aşağı doğru git
+    for (int i = stack->top - 1; i >= 0; i--) { 
         if (stack->data[i] < min_val) {
             min_val = stack->data[i];
             min_index = i;
@@ -19,14 +17,13 @@ int find_min_index(t_stack *stack) {
     return min_index;
 }
 
-// Stack'te maximum değerin indexini bul
 int find_max_index(t_stack *stack) {
     if (stack->top == -1) return -1;
     
-    int max_val = stack->data[stack->top];  // En üstten başla
+    int max_val = stack->data[stack->top]; 
     int max_index = stack->top;
     
-    for (int i = stack->top - 1; i >= 0; i--) {  // Aşağı doğru git
+    for (int i = stack->top - 1; i >= 0; i--) {  
         if (stack->data[i] > max_val) {
             max_val = stack->data[i];
             max_index = i;
@@ -35,15 +32,13 @@ int find_max_index(t_stack *stack) {
     return max_index;
 }
 
-// Stack B'de value için target pozisyonu bul - DÜZELTILDI
 int find_target_in_b(t_stack *b, int value) {
     if (b->top == -1) 
-        return 0; // B boşsa index 0'a yerleştir
+        return 0; 
     
     int target_index = -1;
     int best_bigger = INT_MAX;
     
-    // B'de value'dan BÜYÜK olan en küçük sayıyı bul
     for (int i = b->top; i >= 0; i--) {
         if (b->data[i] > value && b->data[i] < best_bigger) {
             best_bigger = b->data[i];
@@ -52,16 +47,13 @@ int find_target_in_b(t_stack *b, int value) {
     }
     
     if (target_index == -1) {
-        // Hepsi value'dan küçükse en büyük
-        return (0);
+        return find_max_index(b);
     }
     
-    // Büyük olanın altına yerleştir
-    return target_index + 1;
+    return target_index;
 }
 
 
-// Stack A'da value için target pozisyonu bul - DÜZELTILDI
 int find_target_in_a(t_stack *a, int value) {
     if (a->top == -1) 
         return 0;
@@ -69,7 +61,6 @@ int find_target_in_a(t_stack *a, int value) {
     int target_index = -1;
     int best_bigger = INT_MAX;
     
-    // A'da value'dan büyük olan en küçük sayıyı bul
     for (int i = a->top; i >= 0; i--) {
         if (a->data[i] > value && a->data[i] < best_bigger) {
             best_bigger = a->data[i];
@@ -78,39 +69,32 @@ int find_target_in_a(t_stack *a, int value) {
     }
     
     if (target_index != -1) {
-        return target_index;
+        return target_index;  
     } else {
-        // Value A'daki herkesten büyükse, min'in üstüne yerleştir
-        return find_min_index(a);
+        return find_min_index(a); 
     }
 }
 
-// Rotation cost hesaplama - DÜZELTILDI
 int calculate_rotation_cost(t_stack *stack, int target_index) {
     if (stack->top == -1) return 0;
     
     int stack_size = stack->top + 1;
     
-    // Yukarıdan (ra/rb) kaç adım
-    int cost_up = (stack->top - target_index + 1) % stack_size;
+    int cost_up = (stack->top - target_index) % stack_size;
     
-    // Aşağıdan (rra/rrb) kaç adım  
     int cost_down = (target_index + 1) % stack_size;
     
     return (cost_up <= cost_down) ? cost_up : cost_down;
 }
 
-// Push cost hesaplama - DÜZELTILDI
 int calculate_push_cost(t_stack *a, t_stack *b, int a_index) {
     int cost_a = calculate_rotation_cost(a, a_index);
     int target_b = find_target_in_b(b, a->data[a_index]);
     int cost_b = (b->top >= 0) ? calculate_rotation_cost(b, target_b) : 0;
     
-    // Basit toplam maliyet (optimizasyon olmadan)
     return cost_a + cost_b;
 }
 
-// En ucuz hareketi bul - DÜZELTILDI
 int find_cheapest_move(t_stack *a, t_stack *b) {
     if (a->top == -1) return -1;
     
@@ -124,18 +108,16 @@ int find_cheapest_move(t_stack *a, t_stack *b) {
             cheapest_index = i;
         }
     }
-    
     return cheapest_index;
 }
 
 // Stack sıralı mı kontrol et - DÜZELTILDI
 int is_sorted(t_stack *a) {
-    if (a->top <= 0) return 1; // 0 veya 1 eleman varsa sıralı
+    if (a->top <= 0) return 1;
     
-    // En üstten aşağı doğru küçükten büyüğe sıralı olmalı
     for (int i = a->top; i > 0; i--) {
         if (a->data[i] > a->data[i-1])
-			return 0;
+            return 0;
     }
     return 1;
 }
