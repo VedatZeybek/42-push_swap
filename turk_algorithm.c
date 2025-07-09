@@ -1,7 +1,7 @@
-#include "push_swap_2.h"
+#include "push_swap.h"
 #include <limits.h>
+#include <stdio.h>
 
-// Optimized minimum index finder
 int find_min_index(t_stack *a)
 {
     int i;
@@ -20,7 +20,6 @@ int find_min_index(t_stack *a)
     return (result);
 }
 
-// Optimized maximum index finder
 int find_max_index(t_stack *a)
 {
     int i;
@@ -39,103 +38,84 @@ int find_max_index(t_stack *a)
     return (result);
 }
 
-// Optimized position finder in B stack
 int find_position_in_b(t_stack *b, int value)
 {
     int i;
-    int target_value;
-    int target_index;
+	int	position;
+	int temp;
 
     if (b->top == -1)
         return (0);
-    target_value = INT_MAX;
+    
     i = b->top;
-    target_index = -1;
+	position = -1;
     while (i >= 0)
     {
-        if (b->data[i] > value && b->data[i] < target_value)
+        if (b->data[i] > value)
         {
-            target_value = b->data[i];
-            target_index = i;
-        }
+			temp = position;
+			position = i;
+			if (temp != -1 && b->data[temp] < b->data[i])
+				position = temp;
+		}
         i--;
     }
-    if (target_index == -1)
-        return (find_max_index(b));
-    return (target_index);
+	if (position == -1)
+		return (find_max_index(b) + 1);
+	return (position);
 }
 
-// Optimized position finder in A stack
 int find_position_in_a(t_stack *a, int value)
 {
-    int target_index;
-    int target_value;
     int i;
+	int	position;
 
     if (a->top == -1)
-        return (-1);
-    i = a->top;
-    target_index = -1;
-    target_value = INT_MAX;
-    while (i >= 0)
-    {
-        if (a->data[i] > value && a->data[i] < target_value)
-        {
-            target_index = i;
-            target_value = a->data[i];
-        }
-        i--;
-    }
-    return (target_index != -1) ? target_index : find_min_index(a);
-}
-
-// Enhanced rotation cost calculation with optimization check
-int rotation_cost(t_stack *stack, int target_index)
-{
-    int cost_from_up;
-    int cost_from_down;
-
-    if (target_index == stack->top || stack->top == -1)
         return (0);
-    cost_from_up = stack->top - target_index;
-    cost_from_down = target_index + 1;
-    return (cost_from_up <= cost_from_down) ? cost_from_up : cost_from_down;
+
+    i = 0;
+	position = -1;
+    while (i <= a->top)
+    {
+        if (a->data[i] > value)
+            position = i;
+        i++;
+    }
+	if (position == -1)
+		return (a->top + 1);
+    return (position);
 }
 
-// Enhanced push cost calculation with dual rotation optimization
-int push_cost_optimized(t_stack *a, t_stack *b, int a_index)
+int rotation_cost(t_stack *stack, int index)
 {
-    int cost_a, cost_b, target_b;
-    int cost_a_up, cost_a_down, cost_b_up, cost_b_down;
-    int same_direction_cost, opposite_direction_cost;
+    int size = stack->top + 1;
+    int cost_up = stack->top - index;
+    int cost_down = index + 1;
+    
+    return (cost_up <= cost_down) ? cost_up : cost_down;
+}
 
-    cost_a = rotation_cost(a, a_index);
-    target_b = find_position_in_b(b, a->data[a_index]);
+int calculate_move_cost(t_stack *a, t_stack *b, int a_index)
+{
+    int cost_a, cost_b;
+    int target_b;
+    int size_a, size_b;
     
+    size_a = a->top + 1;
+    size_b = b->top + 1;
+    
+    cost_a = (a->top - a_index <= a_index + 1) ? a->top - a_index : a_index + 1;
     if (b->top == -1)
-        return (cost_a);
-    
-    cost_b = rotation_cost(b, target_b);
-    
-    // Calculate costs for both directions
-    cost_a_up = a->top - a_index;
-    cost_a_down = a_index + 1;
-    cost_b_up = b->top - target_b;
-    cost_b_down = target_b + 1;
-    
-    // Check if both stacks rotate in same direction (can be optimized with rr/rrr)
-    if ((cost_a_up <= cost_a_down && cost_b_up <= cost_b_down) ||
-        (cost_a_up > cost_a_down && cost_b_up > cost_b_down))
+        cost_b = 0;
+    else
     {
-        same_direction_cost = (cost_a > cost_b) ? cost_a : cost_b;
-        return (same_direction_cost);
+        target_b = find_position_in_b(b, a->data[a_index]);
+        cost_b = (b->top - target_b <= target_b + 1) ? b->top - target_b + 1 : target_b;
     }
-    
-    // Different directions, no optimization possible
+    //printf("\ncost a: %d cost b: %d", cost_a, cost_b);
     return (cost_a + cost_b);
 }
 
-// Optimized cheapest move finder
 int find_cheapest_move(t_stack *a, t_stack *b)
 {
     int min_cost;
@@ -146,13 +126,14 @@ int find_cheapest_move(t_stack *a, t_stack *b)
     if (a->top == -1)
         return (-1);
     
-    min_cost = push_cost_optimized(a, b, a->top);
+    min_cost = calculate_move_cost(a, b, a->top);
     cheapest_index = a->top;
-    i = a->top - 1;
     
+    i = a->top - 1;
     while (i >= 0)
     {
-        current_cost = push_cost_optimized(a, b, i);
+		printf("min cost: %d\n", min_cost);
+        current_cost = calculate_move_cost(a, b, i);
         if (current_cost < min_cost)
         {
             min_cost = current_cost;
@@ -163,86 +144,39 @@ int find_cheapest_move(t_stack *a, t_stack *b)
     return (cheapest_index);
 }
 
-// Enhanced stack order checker
 int is_ordered(t_stack *stack)
 {
     int i;
 
     if (stack->top <= 0)
         return (1);
-    i = stack->top;
-    while (i > 0)
+    i = 0;
+    while (i < stack->top)
     {
-        if (stack->data[i] > stack->data[i - 1])
+        if (stack->data[i] > stack->data[i + 1])
             return (0);
-        i--;
+        i++;
     }
     return (1);
 }
 
-// Optimized rotation with dual stack support
-void rotate_to_top_optimized(t_stack *a, t_stack *b, int target_a, int target_b)
-{
-    int cost_a_up, cost_a_down, cost_b_up, cost_b_down;
-    int rotate_up_a, rotate_up_b;
-    int common_rotations;
-
-    if (a->top == -1 || b->top == -1)
-        return;
-
-    cost_a_up = a->top - target_a;
-    cost_a_down = target_a + 1;
-    cost_b_up = b->top - target_b;
-    cost_b_down = target_b + 1;
-
-    rotate_up_a = (cost_a_up <= cost_a_down);
-    rotate_up_b = (cost_b_up <= cost_b_down);
-
-    // If both rotate in same direction, use rr/rrr
-    if (rotate_up_a == rotate_up_b)
-    {
-        common_rotations = (rotate_up_a) ? 
-            ((cost_a_up < cost_b_up) ? cost_a_up : cost_b_up) :
-            ((cost_a_down < cost_b_down) ? cost_a_down : cost_b_down);
-        
-        // Perform common rotations
-        for (int i = 0; i < common_rotations; i++)
-        {
-            if (rotate_up_a)
-                rr(a, b);
-            else
-                rrr(a, b);
-        }
-        
-        // Finish remaining rotations
-        rotate_to_top(a, target_a, 'a');
-        rotate_to_top(b, target_b, 'b');
-    }
-    else
-    {
-        // Different directions, rotate separately
-        rotate_to_top(a, target_a, 'a');
-        rotate_to_top(b, target_b, 'b');
-    }
-}
-
-// Standard rotation function
 void rotate_to_top(t_stack *stack, int target_index, char stack_name)
 {
-    int cost_from_up;
-    int cost_from_down;
+    int cost_up, cost_down;
     int i;
+		printf("FLAG");
 
-    if (target_index == stack->top)
-        return;
+    if (target_index == stack->top || stack->top == -1 || target_index == -1)
+        return ;
     
-    i = 0;
-    cost_from_up = stack->top - target_index;
-    cost_from_down = target_index + 1;
+    cost_up = stack->top - target_index;
+    cost_down = target_index + 1;
+		printf("FLAG");
     
-    if (cost_from_up <= cost_from_down)
+    if (cost_up <= cost_down)
     {
-        while (i < cost_from_up)
+        i = 0;
+        while (i < cost_up)
         {
             if (stack_name == 'a')
                 ra(stack);
@@ -253,7 +187,8 @@ void rotate_to_top(t_stack *stack, int target_index, char stack_name)
     }
     else
     {
-        while (i < cost_from_down)
+        i = 0;
+        while (i < cost_down)
         {
             if (stack_name == 'a')
                 rra(stack);
@@ -264,80 +199,128 @@ void rotate_to_top(t_stack *stack, int target_index, char stack_name)
     }
 }
 
-// Enhanced push execution with optimization
-void execute_push_optimized(t_stack *a, t_stack *b, int cheapest_index)
+// DÜZELTME 4: Rotate to position fonksiyonu ekle
+
+// void rotate_to_position(t_stack *stack, int target_index, char stack_name)
+// {
+//     int cost_up, cost_down;
+//     int i;
+
+//     if (target_index == 0 || stack->top == -1)
+//         return;
+    
+//     cost_up = target_index;
+//     cost_down = (stack->top + 1) - target_index;
+    
+//     if (cost_up <= cost_down)
+//     {
+//         i = 0;
+//         while (i < cost_up)
+//         {
+//             if (stack_name == 'a')
+//                 rra(stack);
+//             else
+//                 rrb(stack);
+//             i++;
+//         }
+//     }
+//     else
+//     {
+//         i = 0;
+//         while (i < cost_down)
+//         {
+//             if (stack_name == 'a')
+//                 ra(stack);
+//             else
+//                 rb(stack);
+//             i++;
+//         }
+//     }
+// }
+
+void execute_push(t_stack *a, t_stack *b, int cheapest_index)
 {
     int target_b;
-    int cost_a_up, cost_a_down, cost_b_up, cost_b_down;
-    int rotate_up_a, rotate_up_b;
 
     target_b = find_position_in_b(b, a->data[cheapest_index]);
-    
-    if (b->top == -1)
-    {
-        rotate_to_top(a, cheapest_index, 'a');
-        pb(a, b);
-        return;
-    }
-
-    cost_a_up = a->top - cheapest_index;
-    cost_a_down = cheapest_index + 1;
-    cost_b_up = b->top - target_b;
-    cost_b_down = target_b + 1;
-
-    rotate_up_a = (cost_a_up <= cost_a_down);
-    rotate_up_b = (cost_b_up <= cost_b_down);
-
-    // Use optimized dual rotation if same direction
-    if (rotate_up_a == rotate_up_b)
-    {
-        int common_rotations = (rotate_up_a) ? 
-            ((cost_a_up < cost_b_up) ? cost_a_up : cost_b_up) :
-            ((cost_a_down < cost_b_down) ? cost_a_down : cost_b_down);
-        
-        for (int i = 0; i < common_rotations; i++)
-        {
-            if (rotate_up_a)
-                rr(a, b);
-            else
-                rrr(a, b);
-        }
-    }
-    
-    // Complete remaining rotations
-    rotate_to_top(a, cheapest_index, 'a');
-    rotate_to_top(b, target_b, 'b');
+    // printf("targetb: %d\n", target_b);
+    // printf(": %d\n", cheapest_index);
+    //if (b->top >= 0)
+    //rotate_to_top(b, target_b, 'b');
+	rotate_to_top(a, cheapest_index, 'a');
+	
+	print_stacks_with_title(a, b, "BEFORE ROTATE B:");
+	printf("target b - 1: %d", target_b -1);
+	printf(" b->top: %d", b->top);
+	if (target_b != b->top + 1)
+		rotate_to_top(b, target_b - 1, 'b');
+	print_stacks_with_title(a, b, "AFTER ROTATE B:");
     pb(a, b);
+	if (target_b == 0)
+		rb(b);
+
 }
 
-// Check if ss (swap both) is beneficial
-int should_use_ss(t_stack *a, t_stack *b)
-{
-    if (a->top < 1 || b->top < 1)
-        return (0);
+// void pre_sort_small_elements(t_stack *a, t_stack *b)
+// {
+//     int size = a->top + 1;
+//     int chunk_size;
+//     int i, j;
+//     int min_val, max_val;
     
-    // Check if swapping both stacks improves ordering
-    int a_improves = (a->data[a->top] > a->data[a->top - 1]);
-    int b_improves = (b->data[b->top] < b->data[b->top - 1]); // B should be desc
+//     if (size <= 3)
+//         return;
     
-    return (a_improves && b_improves);
-}
+//     min_val = a->data[0];
+//     max_val = a->data[0];
+//     for (i = 1; i <= a->top; i++)
+//     {
+//         if (a->data[i] < min_val)
+//             min_val = a->data[i];
+//         if (a->data[i] > max_val)
+//             max_val = a->data[i];
+//     }
+    
+//     chunk_size = (max_val - min_val) / 3;
+//     int first_chunk = min_val + chunk_size;
+//     int second_chunk = min_val + 2 * chunk_size;
+    
+//     i = a->top;
+//     while (i >= 0 && a->top > 2)
+//     {
+//         if (a->data[i] <= first_chunk)
+//         {
+//             rotate_to_top(a, i, 'a');
+//             pb(a, b);
+//             i = a->top;
+//         }
+//         else
+//             i--;
+//     }
+    
+//     i = a->top;
+//     while (i >= 0 && a->top > 2)
+//     {
+//         if (a->data[i] <= second_chunk)
+//         {
+//             rotate_to_top(a, i, 'a');
+//             pb(a, b);
+//             i = a->top;
+//         }
+//         else
+//             i--;
+//     }
+// }
 
-// Enhanced pre-algorithm controls with ss optimization
 int control_before_algorithm(t_stack *a, t_stack *b)
 {
-    if (is_ordered(a))
+    if (is_ordered(a) || a->top == 0)
         return (1);
+
     if (a->top == 1)
     {
-        if (a->data[1] > a->data[0])
-        {
-            // Check if we can use ss instead of sa
-            if (b->top >= 1 && b->data[b->top] < b->data[b->top - 1])
-                ss(a, b);
-            else
-                sa(a);
-        }
+        if (a->data[0] > a->data[1]) // DÜZELTME 5: Doğru karşılaştırma
+            sa(a);
         return (1);
     }
     if (a->top == 2)
@@ -348,55 +331,58 @@ int control_before_algorithm(t_stack *a, t_stack *b)
     return (0);
 }
 
-// Enhanced Turk Algorithm with ss optimization
-void turk_algorithm_optimized(t_stack *a, t_stack *b)
+void turk_algorithm(t_stack *a, t_stack *b)
 {
     int cheapest_index;
     int min_index;
+    int size;
 
     if (control_before_algorithm(a, b))
         return;
     
-    // Push first two elements to B
-    pb(a, b);
-    pb(a, b);
+    size = a->top + 1;
     
-    // Sort B stack (larger on top) - check for ss opportunity
-    if (b->top >= 1 && b->data[b->top] < b->data[b->top - 1])
-    {
-        if (should_use_ss(a, b))
-            ss(a, b);
-        else
-            sb(b);
-    }
+    // if (size > 50)
+    // {
+    //     pre_sort_small_elements(a, b);
+    // }
+    // else
+    // {
+    //     pb(a, b);
+    //     if (a->top > 2)
+    //         pb(a, b);
+    // }
+     pb(a, b);
+        if (a->top > 2)
+            pb(a, b);
+    // DÜZELTME 6: Stack B'yi büyükten küçüğe sırala
+    if (b->top > 0 && b->data[b->top] < b->data[b->top - 1])
+        sb(b);
     
-    // Main algorithm loop
     while (a->top > 2)
     {
-        // Check for ss opportunity before each move
-        if (should_use_ss(a, b))
-            ss(a, b);
-        
         cheapest_index = find_cheapest_move(a, b);
-        execute_push_optimized(a, b, cheapest_index);
+        execute_push(a, b, cheapest_index);
     }
     
-    // Sort remaining 3 elements in A
     sort_threesize_stack(a);
-    
-    // Push back from B to A
+	//print_stacks_with_title(stack_a, stack_b, "AFTER");
+	print_stacks_with_title(a, b, "AFTER PUSH B:");
+     
+
+    // DÜZELTME 7: Stack B'den A'ya geri dönerken doğru pozisyonu kullan
+
     while (b->top >= 0)
     {
         int target_a = find_position_in_a(a, b->data[b->top]);
         rotate_to_top(a, target_a, 'a');
         pa(a, b);
-        
-        // Check for ss opportunity after each push
-        if (should_use_ss(a, b))
-            ss(a, b);
     }
     
-    // Final rotation to get minimum at top
+    // DÜZELTME 8: Final rotasyon - minimum elemanı en alta getir
     min_index = find_min_index(a);
-    rotate_to_top(a, min_index, 'a');
+    rotate_to_top(a, 0, 'a'); // Minimum elemanı en alta getir
+    
+    // Alternatif: Minimum elemanı en üste getir
+    // rotate_to_top(a, min_index, 'a');
 }

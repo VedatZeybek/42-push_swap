@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include "push_swap_2.h"
+#include "push_swap.h"
 
 int	is_empty(t_stack *stack)
 {
@@ -44,9 +44,7 @@ t_stack	*init_stack(int *data, int size)
 		stack->top = size - 1;
 	}
 	else
-	{
 		stack->top = -1;
-	}
 	stack->size = size;
 	return(stack);
 }
@@ -76,6 +74,16 @@ int	pop_from_stack(t_stack *stack)
 	return (0);
 }
 
+void print_operation(char *op)
+{
+    static int first_operation = 1;
+    
+    if (!first_operation)
+        printf("\n");
+    printf("%s", op);
+    first_operation = 0;
+}
+
 void	sa(t_stack *stack_a)
 {
 	int temp;
@@ -88,6 +96,7 @@ void	sa(t_stack *stack_a)
 		stack_a->data[top_index] = stack_a->data[top_index - 1];
 		stack_a->data[top_index - 1] = temp;
 	}
+	print_operation("sa");
 }
 
 void	sb(t_stack *stack_b)
@@ -102,12 +111,30 @@ void	sb(t_stack *stack_b)
 		stack_b->data[top_index] = stack_b->data[top_index - 1];
 		stack_b->data[top_index - 1] = temp;
 	}
+	print_operation("sb");
+
 }
 
 void	ss(t_stack *stack_a, t_stack *stack_b)
 {
-	sa(stack_a);
-	sb(stack_b);
+	int temp;
+	int	top_index;
+
+	top_index = stack_a->top;
+	if (stack_a->top >= 1)
+	{
+		temp = stack_a->data[top_index];
+		stack_a->data[top_index] = stack_a->data[top_index - 1];
+		stack_a->data[top_index - 1] = temp;
+	}
+	top_index = stack_b->top;
+	if (stack_b->top >= 1)
+	{
+		temp = stack_b->data[top_index];
+		stack_b->data[top_index] = stack_b->data[top_index - 1];
+		stack_b->data[top_index - 1] = temp;
+	}
+	printf("ss\n");
 }
 
 void	pa(t_stack *stack_a, t_stack *stack_b)
@@ -116,6 +143,8 @@ void	pa(t_stack *stack_a, t_stack *stack_b)
 
 	value = pop_from_stack(stack_b);
 	push_to_stack(stack_a, value);
+	print_operation("pa");
+
 }
 
 void	pb(t_stack *stack_a, t_stack *stack_b)
@@ -124,6 +153,8 @@ void	pb(t_stack *stack_a, t_stack *stack_b)
 
 	value = pop_from_stack(stack_a);
 	push_to_stack(stack_b, value);
+	print_operation("pb");
+
 }
 
 void	ra(t_stack *stack_a)
@@ -147,6 +178,7 @@ void	ra(t_stack *stack_a)
 		}
 		stack_a->data[0] = last_value;
 	}
+	print_operation("ra");
 }
 
 void	rb(t_stack *stack_b)
@@ -170,12 +202,47 @@ void	rb(t_stack *stack_b)
 		}
 		stack_b->data[0] = last_value;
 	}
+	print_operation("rb");
+
 }
 
 void	rr(t_stack *stack_a, t_stack *stack_b)
 {
-	ra(stack_a);
-	rb(stack_b);
+	int	i;
+	int temp;
+	int	temp2;
+	int	last_value;
+
+	if (stack_a->top >= 2)
+	{
+		i = 0;
+		temp = stack_a->data[i];
+		last_value = stack_a->data[stack_a->top];
+		while (i < stack_a->size)
+		{
+			temp2 = stack_a->data[i + 1];
+			stack_a->data[i + 1] = 	temp; 
+			temp = temp2;
+			i++;
+		}
+		stack_a->data[0] = last_value;
+	}
+if (stack_b->top >= 2)
+	{
+		i = 0;
+		temp = stack_b->data[i];
+		last_value = stack_b->data[stack_b->top];
+		while (i < stack_b->size)
+		{
+			temp2 = stack_b->data[i + 1];
+			stack_b->data[i + 1] = 	temp; 
+			temp = temp2;
+			i++;
+		}
+		stack_b->data[0] = last_value;
+	}
+	print_operation("rr");
+
 }
 
 void	rra(t_stack *stack_a)
@@ -199,6 +266,8 @@ void	rra(t_stack *stack_a)
 		}
 		stack_a->data[stack_a->top] = last_value;
 	}
+	print_operation("rra");
+	
 }
 
 void	rrb(t_stack *stack_b)
@@ -222,12 +291,45 @@ void	rrb(t_stack *stack_b)
 		}
 		stack_b->data[stack_b->top] = last_value;
 	}
+	print_operation("rrb");
 }
 
 void	rrr(t_stack *stack_a, t_stack *stack_b)
 {
-	rra(stack_a);
-	rrb(stack_b);
+	int	i;
+	int temp;
+	int	temp2;
+	int	last_value;
+
+	if (stack_a->top >= 2)
+	{
+		i = stack_a->top;
+		temp = stack_a->data[stack_a->top];
+		last_value = stack_a->data[0];
+		while (i >= 0)
+		{
+			temp2 = stack_a->data[i - 1];
+			stack_a->data[i - 1] = 	temp; 
+			temp = temp2;
+			i--;
+		}
+		stack_a->data[stack_a->top] = last_value;
+	}
+		if (stack_b->top >= 2)
+	{
+		i = stack_b->top;
+		temp = stack_b->data[stack_b->top];
+		last_value = stack_b->data[0];
+		while (i >= 0)
+		{
+			temp2 = stack_b->data[i - 1];
+			stack_b->data[i - 1] = 	temp; 
+			temp = temp2;
+			i--;
+		}
+		stack_b->data[stack_b->top] = last_value;
+	}
+	print_operation("rrr");
 }
 
 
@@ -508,13 +610,18 @@ int main(int argc, char **argv) {
 	int num = find_position_in_b(stack_a, 7);
 	int num2 = find_position_in_a(stack_a, 7);
 
-	printf("positioni: %d\n", num);
-	printf("positioni: %d\n", num2);
+	// printf("positioni: %d\n", num);
+	// printf("positioni: %d\n", num2);
 
-	print_stacks_with_title(stack_a, stack_b, "BEFORE");
+	//print_stacks_with_title(stack_a, stack_b, "BEFORE");
 
+
+	if (is_ordered(stack_a))
+		return (0);
 	turk_algorithm(stack_a, stack_b);
 	
-	print_stacks_with_title(stack_a, stack_b, "AFTER");
+	//rra(stack_a);
+	//print_stacks_with_title(stack_a, stack_b, "AFTER");
+    printf("\n");  // Son \n'i main'de ekle
 
 }

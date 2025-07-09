@@ -6,6 +6,7 @@ typedef struct s_stack
 	int	*data;
 	int	size;
 	int	top;
+	int	first_print_flag;
 } t_stack;
 
 int	is_empty(t_stack *stack);
@@ -27,6 +28,7 @@ void	rrr(t_stack *stack_a, t_stack *stack_b);
 int	*parse_arguments(int **result, int argc, char **argv);
 void	sort_threesize_stack(t_stack *stack_a);
 void print_stack(t_stack *stack, char name);
+void print_stacks_with_title(t_stack *a, t_stack *b, const char *title);
 
 int find_min_index(t_stack *stack);
 int find_max_index(t_stack *stack);
@@ -41,7 +43,7 @@ void rotate_to_top(t_stack *stack, int target_index, char stack_name);
 void execute_push_optimized(t_stack *a, t_stack *b, int cheapest_index);
 int should_use_ss(t_stack *a, t_stack *b);
 int control_before_algorithm(t_stack *a, t_stack *b);
-void turk_algorithm_optimized(t_stack *a, t_stack *b);
+void turk_algorithm(t_stack *a, t_stack *b);
 
 
 
