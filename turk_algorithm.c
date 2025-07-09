@@ -69,6 +69,7 @@ int find_position_in_a(t_stack *a, int value)
 {
     int i;
 	int	position;
+	int temp;
 
     if (a->top == -1)
         return (0);
@@ -77,12 +78,17 @@ int find_position_in_a(t_stack *a, int value)
 	position = -1;
     while (i <= a->top)
     {
+		temp = position;
         if (a->data[i] > value)
+		{
             position = i;
+			if (temp != -1 && a->data[temp] < a->data[i])
+				position = temp;
+		}
         i++;
     }
 	if (position == -1)
-		return (a->top + 1);
+		return (find_max_index(a));
     return (position);
 }
 
@@ -110,9 +116,10 @@ int calculate_move_cost(t_stack *a, t_stack *b, int a_index)
     else
     {
         target_b = find_position_in_b(b, a->data[a_index]);
-        cost_b = (b->top - target_b <= target_b + 1) ? b->top - target_b + 1 : target_b;
-    }
-    //printf("\ncost a: %d cost b: %d", cost_a, cost_b);
+        cost_b = (b->top - target_b < target_b + 1) ? b->top - target_b + 1 : target_b + 1;
+		//hatalı olabilir konrole gerek var
+	}
+
     return (cost_a + cost_b);
 }
 
@@ -128,11 +135,11 @@ int find_cheapest_move(t_stack *a, t_stack *b)
     
     min_cost = calculate_move_cost(a, b, a->top);
     cheapest_index = a->top;
-    
+	//printf("\n cheapest index: %d, min_cost: %d \n", cheapest_index, min_cost);
+
     i = a->top - 1;
     while (i >= 0)
     {
-		printf("min cost: %d\n", min_cost);
         current_cost = calculate_move_cost(a, b, i);
         if (current_cost < min_cost)
         {
@@ -141,6 +148,7 @@ int find_cheapest_move(t_stack *a, t_stack *b)
         }
         i--;
     }
+	//printf("\n cheapest index: %d, min_cost: %d \n", cheapest_index, min_cost);
     return (cheapest_index);
 }
 
@@ -164,14 +172,12 @@ void rotate_to_top(t_stack *stack, int target_index, char stack_name)
 {
     int cost_up, cost_down;
     int i;
-		printf("FLAG");
 
     if (target_index == stack->top || stack->top == -1 || target_index == -1)
         return ;
     
     cost_up = stack->top - target_index;
     cost_down = target_index + 1;
-		printf("FLAG");
     
     if (cost_up <= cost_down)
     {
@@ -238,7 +244,7 @@ void rotate_to_top(t_stack *stack, int target_index, char stack_name)
 //     }
 // }
 
-void execute_push(t_stack *a, t_stack *b, int cheapest_index)
+void execute_push_to_b(t_stack *a, t_stack *b, int cheapest_index)
 {
     int target_b;
 
@@ -249,12 +255,8 @@ void execute_push(t_stack *a, t_stack *b, int cheapest_index)
     //rotate_to_top(b, target_b, 'b');
 	rotate_to_top(a, cheapest_index, 'a');
 	
-	print_stacks_with_title(a, b, "BEFORE ROTATE B:");
-	printf("target b - 1: %d", target_b -1);
-	printf(" b->top: %d", b->top);
 	if (target_b != b->top + 1)
 		rotate_to_top(b, target_b - 1, 'b');
-	print_stacks_with_title(a, b, "AFTER ROTATE B:");
     pb(a, b);
 	if (target_b == 0)
 		rb(b);
@@ -362,27 +364,30 @@ void turk_algorithm(t_stack *a, t_stack *b)
     while (a->top > 2)
     {
         cheapest_index = find_cheapest_move(a, b);
-        execute_push(a, b, cheapest_index);
+        execute_push_to_b(a, b, cheapest_index);
     }
-    
+    rotate_to_top(b, find_max_index(b), 'b');
     sort_threesize_stack(a);
-	//print_stacks_with_title(stack_a, stack_b, "AFTER");
-	print_stacks_with_title(a, b, "AFTER PUSH B:");
      
 
-    // DÜZELTME 7: Stack B'den A'ya geri dönerken doğru pozisyonu kullan
 
     while (b->top >= 0)
     {
         int target_a = find_position_in_a(a, b->data[b->top]);
-        rotate_to_top(a, target_a, 'a');
+		//printf("target_a: %d", target_a);
+
+		if (target_a != 0)
+			rotate_to_top(a, target_a , 'a');
+		else
+		{
+			if (a->data[0] != a->data[find_max_index(a)] )
+        		rotate_to_top(a, target_a, 'a');
+		}
         pa(a, b);
+		//print_stacks_with_title(a, b, "AFTER PUSH A:");
     }
     
-    // DÜZELTME 8: Final rotasyon - minimum elemanı en alta getir
     min_index = find_min_index(a);
-    rotate_to_top(a, 0, 'a'); // Minimum elemanı en alta getir
+    rotate_to_top(a, min_index, 'a');
     
-    // Alternatif: Minimum elemanı en üste getir
-    // rotate_to_top(a, min_index, 'a');
 }

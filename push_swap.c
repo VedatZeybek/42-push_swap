@@ -621,6 +621,7 @@ int main(int argc, char **argv) {
 	turk_algorithm(stack_a, stack_b);
 	
 	//rra(stack_a);
+	
 	//print_stacks_with_title(stack_a, stack_b, "AFTER");
     printf("\n");  // Son \n'i main'de ekle
 
