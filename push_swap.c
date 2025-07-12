@@ -19,12 +19,24 @@ int is_full(t_stack *stack)
 	return (0);
 }
 
-void	print_error()
+void	print_error(t_stack *stack_a, t_stack *stack_b)
 {
 	write(2, "error\n", 6);
+	free(stack_a->data);
+	free(stack_b->data);
+	free(stack_a);
+	free(stack_b);
 	exit(EXIT_FAILURE);
 }
 
+void	free_and_exit(t_stack *stack_a, t_stack *stack_b)
+{
+	free(stack_a->data);
+	free(stack_b->data);
+	free(stack_a);
+	free(stack_b);
+	exit(EXIT_SUCCESS);
+}
 t_stack	*init_stack(int *data, int size)
 {
 	t_stack	*stack;
@@ -379,7 +391,6 @@ int	*duplicate_checker(int **data, int size)
 		{
 			if ((*data)[i] == (*data)[j])
 			{
-				print_error();
                 free(*data);
                 *data = NULL;
                 return (NULL);
@@ -400,17 +411,15 @@ int	*parse_arguments(int **result, int argc, char **argv)
 	*result = malloc(sizeof(int) * (argc - 1));
 	if (!(*result))
 	{
-		print_error();
 		return (NULL);
 	}
     while (i < argc - 1)
 	{
 		if (!is_valid_number(argv[i + 1], &num))
 		{
-			print_error();
 			free(*result);
 			*result = NULL;
-			return NULL;
+			return (NULL);
 		}
 		(*result)[argc - 2 - i] = (int)num;
 		i++;
@@ -433,13 +442,6 @@ void sort_threesize_stack(t_stack *stack_a)
 		rra(stack_a);
 	if (stack_a->data[stack_a->top] > stack_a->data[stack_a->top - 1])
 		sa(stack_a);
-}
-
-void print_stack(t_stack *stack, char name)
-{
-	printf("stack %c:\n", name);
-	for (int i = stack->top; i >= 0; i--)
-		printf("%d\n", stack->data[i]);
 }
 
 // Turk Algoritması Debug Versiyonu
@@ -469,18 +471,15 @@ int main(int argc, char **argv)
 	if (argc < 2)
 		return (1);
 	data_a = parse_arguments(&data_a, argc, argv);
+	if (data_a == NULL)
+		write(2, "error\n", 6);
 	data_b = NULL;
 	temp = data_a;
 	stack_a = init_stack(data_a, argc - 1);
 	free(temp);
 	stack_b = init_stack(NULL, argc - 1);
-	//print_stacks_with_title(stack_a, stack_b, "before algorithm");
 	if (is_ordered(stack_a))
-		return (EXIT_SUCCESS);
+		free_and_exit(stack_a, stack_b);
 	turk_algorithm(stack_a, stack_b);
-	//print_stacks_with_title(stack_a, stack_b, "after algorithm");
-	free(stack_a->data);
-	free(stack_b->data);
-	free(stack_a);
-	free(stack_b);
+	free_and_exit(stack_a, stack_b);
 }
