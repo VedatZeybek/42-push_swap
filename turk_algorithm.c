@@ -51,17 +51,17 @@ int find_position_in_b(t_stack *b, int value)
 	position = -1;
     while (i >= 0)
     {
-        if (b->data[i] > value)
+        if (b->data[i] < value)
         {
 			temp = position;
 			position = i;
-			if (temp != -1 && b->data[temp] < b->data[i])
+			if (temp != -1 && b->data[temp] > b->data[i])
 				position = temp;
 		}
         i--;
     }
 	if (position == -1)
-		return (find_max_index(b) + 1);
+		return (find_max_index(b));
 	return (position);
 }
 
@@ -88,7 +88,7 @@ int find_position_in_a(t_stack *a, int value)
         i++;
     }
 	if (position == -1)
-		return (find_max_index(a));
+		return (find_min_index(a));
     return (position);
 }
 
@@ -116,8 +116,8 @@ int calculate_move_cost(t_stack *a, t_stack *b, int a_index)
     else
     {
         target_b = find_position_in_b(b, a->data[a_index]);
-        cost_b = (b->top - target_b < target_b + 1) ? b->top - target_b + 1 : target_b + 1;
-		//hatalı olabilir konrole gerek var
+		//printf("target_b: %d\n", target_b);
+        cost_b = (b->top - target_b < target_b + 1) ? b->top - target_b : target_b + 1;
 	}
 
     return (cost_a + cost_b);
@@ -161,7 +161,7 @@ int is_ordered(t_stack *stack)
     i = 0;
     while (i < stack->top)
     {
-        if (stack->data[i] > stack->data[i + 1])
+        if (stack->data[i] < stack->data[i + 1])
             return (0);
         i++;
     }
@@ -181,13 +181,17 @@ void rotate_to_top(t_stack *stack, int target_index, char stack_name)
     
     if (cost_up <= cost_down)
     {
+		//printf("FLAG %d \n", cost_up);
         i = 0;
         while (i < cost_up)
         {
             if (stack_name == 'a')
                 ra(stack);
             else
+			{
                 rb(stack);
+				//printf("FLAG2");
+			}
             i++;
         }
     }
@@ -249,17 +253,15 @@ void execute_push_to_b(t_stack *a, t_stack *b, int cheapest_index)
     int target_b;
 
     target_b = find_position_in_b(b, a->data[cheapest_index]);
-    // printf("targetb: %d\n", target_b);
-    // printf(": %d\n", cheapest_index);
-    //if (b->top >= 0)
-    //rotate_to_top(b, target_b, 'b');
+	//printf("target_b %d\n", target_b);
+	//printf("cheapest index %d\n", cheapest_index);
+	//print_stacks_with_title(a, b, "PRINT STACK BEFORE ROTATE:");
 	rotate_to_top(a, cheapest_index, 'a');
-	
-	if (target_b != b->top + 1)
-		rotate_to_top(b, target_b - 1, 'b');
+	rotate_to_top(b, target_b, 'b');
+	//print_stacks_with_title(a, b, "PRINT STACK AFTER ROTATE:");
     pb(a, b);
-	if (target_b == 0)
-		rb(b);
+	// if (target_b == 0)
+	// 	rb(b);
 
 }
 
@@ -317,13 +319,14 @@ void execute_push_to_b(t_stack *a, t_stack *b, int cheapest_index)
 int control_before_algorithm(t_stack *a, t_stack *b)
 {
     if (is_ordered(a) || a->top == 0)
+	{
         return (1);
-
+	}
     if (a->top == 1)
     {
-        if (a->data[0] > a->data[1]) // DÜZELTME 5: Doğru karşılaştırma
+        if (a->data[0] < a->data[1])
             sa(a);
-        return (1);
+		return (1);
     }
     if (a->top == 2)
     {
@@ -333,6 +336,7 @@ int control_before_algorithm(t_stack *a, t_stack *b)
     return (0);
 }
 
+
 void turk_algorithm(t_stack *a, t_stack *b)
 {
     int cheapest_index;
@@ -340,7 +344,7 @@ void turk_algorithm(t_stack *a, t_stack *b)
     int size;
 
     if (control_before_algorithm(a, b))
-        return;
+        return ;
     
     size = a->top + 1;
     
@@ -354,6 +358,7 @@ void turk_algorithm(t_stack *a, t_stack *b)
     //     if (a->top > 2)
     //         pb(a, b);
     // }
+
      pb(a, b);
         if (a->top > 2)
             pb(a, b);
@@ -365,10 +370,12 @@ void turk_algorithm(t_stack *a, t_stack *b)
     {
         cheapest_index = find_cheapest_move(a, b);
         execute_push_to_b(a, b, cheapest_index);
+		//print_stacks_with_title(a, b, "PRINT STACK EVERY PUSH:");
     }
     rotate_to_top(b, find_max_index(b), 'b');
     sort_threesize_stack(a);
-     
+	
+	//print_stacks_with_title(a, b, "AFTER PUSH B:");
 
 
     while (b->top >= 0)
@@ -376,18 +383,22 @@ void turk_algorithm(t_stack *a, t_stack *b)
         int target_a = find_position_in_a(a, b->data[b->top]);
 		//printf("target_a: %d", target_a);
 
-		if (target_a != 0)
-			rotate_to_top(a, target_a , 'a');
-		else
-		{
-			if (a->data[0] != a->data[find_max_index(a)] )
-        		rotate_to_top(a, target_a, 'a');
-		}
+		// if (target_a != 0)
+		// 	rotate_to_top(a, target_a , 'a');
+		// else
+		// {
+		// 	if (a->data[0] != a->data[find_max_index(a)] )
+        // 		rotate_to_top(a, target_a, 'a');
+		// }
+		rotate_to_top(a, target_a , 'a');
         pa(a, b);
-		//print_stacks_with_title(a, b, "AFTER PUSH A:");
+		//print_stacks_with_title(a, b, "AFTER EVERY PUSH A:");
     }
     
     min_index = find_min_index(a);
     rotate_to_top(a, min_index, 'a');
+
+
+	//print_stacks_with_title(a, b, "AFTER PUSH A:");
     
 }

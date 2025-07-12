@@ -71,17 +71,12 @@ int	pop_from_stack(t_stack *stack)
 		stack->top--;
 		return (value);
 	}
-	return (0);
+	return (-1);
 }
 
 void print_operation(char *op)
-{
-    static int first_operation = 1;
-    
-    if (!first_operation)
-        printf("\n");
-    printf("%s", op);
-    first_operation = 0;
+{    
+    printf("%s\n", op);
 }
 
 void	sa(t_stack *stack_a)
@@ -95,8 +90,8 @@ void	sa(t_stack *stack_a)
 		temp = stack_a->data[top_index];
 		stack_a->data[top_index] = stack_a->data[top_index - 1];
 		stack_a->data[top_index - 1] = temp;
+		print_operation("sa");
 	}
-	print_operation("sa");
 }
 
 void	sb(t_stack *stack_b)
@@ -110,9 +105,9 @@ void	sb(t_stack *stack_b)
 		temp = stack_b->data[top_index];
 		stack_b->data[top_index] = stack_b->data[top_index - 1];
 		stack_b->data[top_index - 1] = temp;
-	}
-	print_operation("sb");
+		print_operation("sb");
 
+	}
 }
 
 void	ss(t_stack *stack_a, t_stack *stack_b)
@@ -133,8 +128,9 @@ void	ss(t_stack *stack_a, t_stack *stack_b)
 		temp = stack_b->data[top_index];
 		stack_b->data[top_index] = stack_b->data[top_index - 1];
 		stack_b->data[top_index - 1] = temp;
+		printf("ss\n");
+
 	}
-	printf("ss\n");
 }
 
 void	pa(t_stack *stack_a, t_stack *stack_b)
@@ -143,7 +139,8 @@ void	pa(t_stack *stack_a, t_stack *stack_b)
 
 	value = pop_from_stack(stack_b);
 	push_to_stack(stack_a, value);
-	print_operation("pa");
+	if (value != -1)
+		print_operation("pa");
 
 }
 
@@ -153,7 +150,8 @@ void	pb(t_stack *stack_a, t_stack *stack_b)
 
 	value = pop_from_stack(stack_a);
 	push_to_stack(stack_b, value);
-	print_operation("pb");
+	if (value != -1)
+		print_operation("pb");
 
 }
 
@@ -164,7 +162,7 @@ void	ra(t_stack *stack_a)
 	int	temp2;
 	int	last_value;
 
-	if (stack_a->top >= 2)
+	if (stack_a->top >= 1)
 	{
 		i = 0;
 		temp = stack_a->data[i];
@@ -177,8 +175,8 @@ void	ra(t_stack *stack_a)
 			i++;
 		}
 		stack_a->data[0] = last_value;
+			print_operation("ra");
 	}
-	print_operation("ra");
 }
 
 void	rb(t_stack *stack_b)
@@ -188,7 +186,7 @@ void	rb(t_stack *stack_b)
 	int	temp2;
 	int	last_value;
 
-	if (stack_b->top >= 2)
+	if (stack_b->top >= 1)
 	{
 		i = 0;
 		temp = stack_b->data[i];
@@ -201,8 +199,8 @@ void	rb(t_stack *stack_b)
 			i++;
 		}
 		stack_b->data[0] = last_value;
+		print_operation("rb");
 	}
-	print_operation("rb");
 
 }
 
@@ -265,8 +263,9 @@ void	rra(t_stack *stack_a)
 			i--;
 		}
 		stack_a->data[stack_a->top] = last_value;
-	}
 	print_operation("rra");
+
+	}
 	
 }
 
@@ -290,8 +289,9 @@ void	rrb(t_stack *stack_b)
 			i--;
 		}
 		stack_b->data[stack_b->top] = last_value;
-	}
 	print_operation("rrb");
+	
+	}
 }
 
 void	rrr(t_stack *stack_a, t_stack *stack_b)
@@ -381,16 +381,9 @@ int	*parse_arguments(int **result, int argc, char **argv)
 // }
 
 void sort_threesize_stack(t_stack *stack_a) {
-    // Güvenlik kontrolü
     if (stack_a->top < 1) 
         return;
-    
-    // 2 eleman varsa
-    if (stack_a->top == 1) {
-        if (stack_a->data[stack_a->top] > stack_a->data[stack_a->top - 1])
-            sa(stack_a);
-        return;
-    }
+
     
     // 3 eleman yoksa çık
     if (stack_a->top != 2)
@@ -424,7 +417,6 @@ void sort_threesize_stack(t_stack *stack_a) {
         sa(stack_a);   // 3 1 2
         ra(stack_a);   // 1 2 3
     }
-    // top < mid && mid < bot durumu zaten sıralı (hiçbir şey yapma)
 }
 
 void print_stack(t_stack *stack, char name)
@@ -597,7 +589,6 @@ int main(int argc, char **argv) {
 	t_stack	*stack_b;
 	
 	if (argc < 2) {
-		printf("Insufficient Argument\n");
 		return (1);
 	}
 	
@@ -606,23 +597,14 @@ int main(int argc, char **argv) {
 	
 	stack_a = init_stack(data_a, argc - 1);
 	stack_b = init_stack(NULL, argc - 1);
-	
-	int num = find_position_in_b(stack_a, 7);
-	int num2 = find_position_in_a(stack_a, 7);
-
-	// printf("positioni: %d\n", num);
-	// printf("positioni: %d\n", num2);
-
-	//print_stacks_with_title(stack_a, stack_b, "BEFORE");
-
 
 	if (is_ordered(stack_a))
-		return (0);
+	{
+		return (1);
+	}
+
 	turk_algorithm(stack_a, stack_b);
 	
-	//rra(stack_a);
 	
-	//print_stacks_with_title(stack_a, stack_b, "AFTER");
-    printf("\n");  // Son \n'i main'de ekle
 
 }
