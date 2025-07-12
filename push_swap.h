@@ -6,8 +6,15 @@ typedef struct s_stack
 	int	*data;
 	int	size;
 	int	top;
-	int	first_print_flag;
 } t_stack;
+
+#ifndef	INT_MAX
+# define INT_MAX 2147483647
+#endif
+
+#ifndef INT_MIN
+# define INT_MIN -2147483648
+#endif
 
 int	is_empty(t_stack *stack);
 int is_full(t_stack *stack);
@@ -42,7 +49,6 @@ void rotate_to_top(t_stack *stack, int target_index, char stack_name);
 void execute_push_to_b(t_stack *a, t_stack *b, int cheapest_index);
 int control_before_algorithm(t_stack *a, t_stack *b);
 void turk_algorithm(t_stack *a, t_stack *b);
-
 
 
 

@@ -1,6 +1,7 @@
 #include "push_swap.h"
 #include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 int find_min_index(t_stack *a)
 {
@@ -101,26 +102,59 @@ int rotation_cost(t_stack *stack, int index)
     return (cost_up <= cost_down) ? cost_up : cost_down;
 }
 
-int calculate_move_cost(t_stack *a, t_stack *b, int a_index)
-{
-    int cost_a, cost_b;
-    int target_b;
-    int size_a, size_b;
+// int calculate_move_cost(t_stack *a, t_stack *b, int a_index)
+// {
+//     int cost_a, cost_b;
+//     int target_b;
+//     int size_a, size_b;
     
-    size_a = a->top + 1;
-    size_b = b->top + 1;
+//     size_a = a->top + 1;
+//     size_b = b->top + 1;
     
-    cost_a = (a->top - a_index <= a_index + 1) ? a->top - a_index : a_index + 1;
-    if (b->top == -1)
-        cost_b = 0;
-    else
-    {
-        target_b = find_position_in_b(b, a->data[a_index]);
-		//printf("target_b: %d\n", target_b);
-        cost_b = (b->top - target_b < target_b + 1) ? b->top - target_b : target_b + 1;
-	}
+//     cost_a = (a->top - a_index <= a_index + 1) ? a->top - a_index : a_index + 1;
+//     if (b->top == -1)
+//         cost_b = 0;
+//     else
+//     {
+//         target_b = find_position_in_b(b, a->data[a_index]);
+//         cost_b = (b->top - target_b < target_b + 1) ? b->top - target_b : target_b + 1;
+// 	}
 
-    return (cost_a + cost_b);
+//     return (cost_a + cost_b);
+// }
+
+int calculate_move_cost(t_stack *a, t_stack *b, int a_index) {
+    int target_b = find_position_in_b(b, a->data[a_index]);
+    int cost_a_up = a->top - a_index; // ra ile maliyet
+    int cost_a_down = a_index + 1;    // rra ile maliyet
+    int cost_b_up = (b->top == -1) ? 0 : b->top - target_b; // rb ile maliyet
+    int cost_b_down = (b->top == -1) ? 0 : target_b + 1;    // rrb ile maliyet
+
+    int min_cost = INT_MAX;
+
+    // 1. ra + rb (rr ile optimize edilmiş)
+    int rr_count = cost_a_up < cost_b_up ? cost_a_up : cost_b_up; // Ortak rr sayısı
+    int remaining_a = cost_a_up - rr_count; // Kalan ra
+    int remaining_b = cost_b_up - rr_count; // Kalan rb
+    int cost_rr = rr_count + remaining_a + remaining_b;
+    if (cost_rr < min_cost) min_cost = cost_rr;
+
+    // 2. rra + rrb (rrr ile optimize edilmiş)
+    int rrr_count = cost_a_down < cost_b_down ? cost_a_down : cost_b_down; // Ortak rrr sayısı
+    remaining_a = cost_a_down - rrr_count; // Kalan rra
+    remaining_b = cost_b_down - rrr_count; // Kalan rrb
+    int cost_rrr = rrr_count + remaining_a + remaining_b;
+    if (cost_rrr < min_cost) min_cost = cost_rrr;
+
+    // 3. ra + rrb
+    int cost_ra_rrb = cost_a_up + cost_b_down;
+    if (cost_ra_rrb < min_cost) min_cost = cost_ra_rrb;
+
+    // 4. rra + rb
+    int cost_rra_rb = cost_a_down + cost_b_up;
+    if (cost_rra_rb < min_cost) min_cost = cost_rra_rb;
+
+    return min_cost;
 }
 
 int find_cheapest_move(t_stack *a, t_stack *b)
@@ -135,7 +169,6 @@ int find_cheapest_move(t_stack *a, t_stack *b)
     
     min_cost = calculate_move_cost(a, b, a->top);
     cheapest_index = a->top;
-	//printf("\n cheapest index: %d, min_cost: %d \n", cheapest_index, min_cost);
 
     i = a->top - 1;
     while (i >= 0)
@@ -148,7 +181,6 @@ int find_cheapest_move(t_stack *a, t_stack *b)
         }
         i--;
     }
-	//printf("\n cheapest index: %d, min_cost: %d \n", cheapest_index, min_cost);
     return (cheapest_index);
 }
 
@@ -181,17 +213,13 @@ void rotate_to_top(t_stack *stack, int target_index, char stack_name)
     
     if (cost_up <= cost_down)
     {
-		//printf("FLAG %d \n", cost_up);
         i = 0;
         while (i < cost_up)
         {
             if (stack_name == 'a')
                 ra(stack);
             else
-			{
                 rb(stack);
-				//printf("FLAG2");
-			}
             i++;
         }
     }
@@ -209,112 +237,113 @@ void rotate_to_top(t_stack *stack, int target_index, char stack_name)
     }
 }
 
-// DÜZELTME 4: Rotate to position fonksiyonu ekle
-
-// void rotate_to_position(t_stack *stack, int target_index, char stack_name)
+// void	rotate_to_top_both(t_stack *a, t_stack *b, int *cheapest_index, int *target_b)
 // {
-//     int cost_up, cost_down;
-//     int i;
+// 	int	above_medium_a;
+// 	int	above_medium_b;
+// 	int	i;
+// 	int	rotation_cost_a;
+// 	int rotation_cost_b;
+// 	int smallest;
 
-//     if (target_index == 0 || stack->top == -1)
-//         return;
-    
-//     cost_up = target_index;
-//     cost_down = (stack->top + 1) - target_index;
-    
-//     if (cost_up <= cost_down)
-//     {
-//         i = 0;
-//         while (i < cost_up)
-//         {
-//             if (stack_name == 'a')
-//                 rra(stack);
-//             else
-//                 rrb(stack);
-//             i++;
-//         }
-//     }
-//     else
-//     {
-//         i = 0;
-//         while (i < cost_down)
-//         {
-//             if (stack_name == 'a')
-//                 ra(stack);
-//             else
-//                 rb(stack);
-//             i++;
-//         }
-//     }
+// 	if (a->top - *cheapest_index >= *cheapest_index + 1)
+// 		above_medium_a = 1;
+// 	else
+// 		above_medium_a = 0;
+// 	if (b->top - *target_b >= *target_b + 1)
+// 		above_medium_b = 1;
+// 	else
+// 		above_medium_b = 0;
+// 	i = 0;
+// 	rotation_cost_a = rotation_cost(a, *cheapest_index);    //3
+// 	rotation_cost_b = rotation_cost(b, *target_b);  	//2
+// 	if (rotation_cost_b > rotation_cost_a)
+// 		smallest = rotation_cost_a;
+// 	else
+// 		smallest = rotation_cost_b;
+// 	if (above_medium_a == above_medium_b)
+// 	{
+// 		while (i < smallest)
+// 		{
+// 			if (above_medium_a)
+// 			{
+// 				*cheapest_index++;
+// 				*target_b++;
+// 				rr(a, b);
+// 			}
+// 			else
+// 			{
+// 				*cheapest_index--;
+// 				*target_b--;
+// 				rrr(a,b);
+// 			}
+// 			i++;
+// 		}
+// 	}
 // }
+
+void rotate_to_top_both(t_stack *a, t_stack *b, int cheapest_index, int target_b) {
+    int cost_a_up = a->top - cheapest_index;
+    int cost_a_down = cheapest_index + 1;
+    int cost_b_up = (b->top == -1) ? 0 : b->top - target_b;
+    int cost_b_down = (b->top == -1) ? 0 : target_b + 1;
+
+    int ra_count = 0, rb_count = 0, rra_count = 0, rrb_count = 0;
+    int min_cost = INT_MAX;
+
+    if (cost_a_up + cost_b_up < min_cost) {
+        min_cost = cost_a_up + cost_b_up;
+        ra_count = cost_a_up;
+        rb_count = cost_b_up;
+        rra_count = 0;
+        rrb_count = 0;
+    }
+    if (cost_a_down + cost_b_down < min_cost) {
+        min_cost = cost_a_down + cost_b_down;
+        ra_count = 0;
+        rb_count = 0;
+        rra_count = cost_a_down;
+        rrb_count = cost_b_down;
+    }
+    if (cost_a_up + cost_b_down < min_cost) {
+        min_cost = cost_a_up + cost_b_down;
+        ra_count = cost_a_up;
+        rb_count = 0;
+        rra_count = 0;
+        rrb_count = cost_b_down;
+    }
+    if (cost_a_down + cost_b_up < min_cost) {
+        min_cost = cost_a_down + cost_b_up;
+        ra_count = 0;
+        rb_count = cost_b_up;
+        rra_count = cost_a_down;
+        rrb_count = 0;
+    }
+    while (ra_count > 0 && rb_count > 0) {
+        rr(a, b);
+        ra_count--;
+        rb_count--;
+    }
+    while (rra_count > 0 && rrb_count > 0) {
+        rrr(a, b);
+        rra_count--;
+        rrb_count--;
+    }
+    while (ra_count-- > 0) ra(a);
+    while (rb_count-- > 0) rb(b);
+    while (rra_count-- > 0) rra(a);
+    while (rrb_count-- > 0) rrb(b);
+}
 
 void execute_push_to_b(t_stack *a, t_stack *b, int cheapest_index)
 {
     int target_b;
 
     target_b = find_position_in_b(b, a->data[cheapest_index]);
-	//printf("target_b %d\n", target_b);
-	//printf("cheapest index %d\n", cheapest_index);
-	//print_stacks_with_title(a, b, "PRINT STACK BEFORE ROTATE:");
-	rotate_to_top(a, cheapest_index, 'a');
-	rotate_to_top(b, target_b, 'b');
-	//print_stacks_with_title(a, b, "PRINT STACK AFTER ROTATE:");
+	rotate_to_top_both(a, b, cheapest_index, target_b);
     pb(a, b);
-	// if (target_b == 0)
-	// 	rb(b);
 
 }
-
-// void pre_sort_small_elements(t_stack *a, t_stack *b)
-// {
-//     int size = a->top + 1;
-//     int chunk_size;
-//     int i, j;
-//     int min_val, max_val;
-    
-//     if (size <= 3)
-//         return;
-    
-//     min_val = a->data[0];
-//     max_val = a->data[0];
-//     for (i = 1; i <= a->top; i++)
-//     {
-//         if (a->data[i] < min_val)
-//             min_val = a->data[i];
-//         if (a->data[i] > max_val)
-//             max_val = a->data[i];
-//     }
-    
-//     chunk_size = (max_val - min_val) / 3;
-//     int first_chunk = min_val + chunk_size;
-//     int second_chunk = min_val + 2 * chunk_size;
-    
-//     i = a->top;
-//     while (i >= 0 && a->top > 2)
-//     {
-//         if (a->data[i] <= first_chunk)
-//         {
-//             rotate_to_top(a, i, 'a');
-//             pb(a, b);
-//             i = a->top;
-//         }
-//         else
-//             i--;
-//     }
-    
-//     i = a->top;
-//     while (i >= 0 && a->top > 2)
-//     {
-//         if (a->data[i] <= second_chunk)
-//         {
-//             rotate_to_top(a, i, 'a');
-//             pb(a, b);
-//             i = a->top;
-//         }
-//         else
-//             i--;
-//     }
-// }
 
 int control_before_algorithm(t_stack *a, t_stack *b)
 {
@@ -336,7 +365,6 @@ int control_before_algorithm(t_stack *a, t_stack *b)
     return (0);
 }
 
-
 void turk_algorithm(t_stack *a, t_stack *b)
 {
     int cheapest_index;
@@ -345,60 +373,32 @@ void turk_algorithm(t_stack *a, t_stack *b)
 
     if (control_before_algorithm(a, b))
         return ;
-    
     size = a->top + 1;
-    
-    // if (size > 50)
-    // {
-    //     pre_sort_small_elements(a, b);
-    // }
-    // else
-    // {
-    //     pb(a, b);
-    //     if (a->top > 2)
-    //         pb(a, b);
-    // }
-
-     pb(a, b);
-        if (a->top > 2)
-            pb(a, b);
-    // DÜZELTME 6: Stack B'yi büyükten küçüğe sırala
-    if (b->top > 0 && b->data[b->top] < b->data[b->top - 1])
+    pb(a, b);
+    if (a->top > 2)
+        pb(a, b);
+	if (b->top > 0 && b->data[b->top] < b->data[b->top - 1])
         sb(b);
-    
+
     while (a->top > 2)
     {
         cheapest_index = find_cheapest_move(a, b);
         execute_push_to_b(a, b, cheapest_index);
-		//print_stacks_with_title(a, b, "PRINT STACK EVERY PUSH:");
     }
+
     rotate_to_top(b, find_max_index(b), 'b');
     sort_threesize_stack(a);
 	
-	//print_stacks_with_title(a, b, "AFTER PUSH B:");
 
 
     while (b->top >= 0)
     {
         int target_a = find_position_in_a(a, b->data[b->top]);
-		//printf("target_a: %d", target_a);
-
-		// if (target_a != 0)
-		// 	rotate_to_top(a, target_a , 'a');
-		// else
-		// {
-		// 	if (a->data[0] != a->data[find_max_index(a)] )
-        // 		rotate_to_top(a, target_a, 'a');
-		// }
 		rotate_to_top(a, target_a , 'a');
         pa(a, b);
-		//print_stacks_with_title(a, b, "AFTER EVERY PUSH A:");
     }
     
     min_index = find_min_index(a);
     rotate_to_top(a, min_index, 'a');
-
-
-	//print_stacks_with_title(a, b, "AFTER PUSH A:");
     
 }
