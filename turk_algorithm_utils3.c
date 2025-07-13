@@ -39,10 +39,10 @@ int calculate_move_cost(t_stack *a, t_stack *b, int a_index)
 	target_b = find_position_in_b(b, a->data[a_index]);
 	calculate_costs(a, a_index, &a_up, &a_down);
 	calculate_costs(b, target_b, &b_up, &b_down);
-	costs[0] = ft_min(a_up, b_up) + ft_abs(a_up - b_up);			// RR + kalan
-	costs[1] = ft_min(a_down, b_down) + ft_abs(a_down - b_down);    // RRR + kalan
-	costs[2] = a_up + b_down;                              	 		// RA + RRB
-	costs[3] = a_down + b_up;                               		// RRA + RB
+	costs[0] = ft_min(a_up, b_up) + ft_abs(a_up - b_up);
+	costs[1] = ft_min(a_down, b_down) + ft_abs(a_down - b_down);
+	costs[2] = a_up + b_down;
+	costs[3] = a_down + b_up;
 	i = 0;
 	min_cost = costs[0];
 	while (i < 4)
