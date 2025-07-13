@@ -1,36 +1,5 @@
 #include "push_swap.h"
 
-int calculate_move_cost(t_stack *a, t_stack *b, int a_index) 
-{
-    int target_b = find_position_in_b(b, a->data[a_index]);
-    int cost_a_up = a->top - a_index;
-    int cost_a_down = a_index + 1;
-    int cost_b_up = (b->top == -1) ? 0 : b->top - target_b;
-    int cost_b_down = (b->top == -1) ? 0 : target_b + 1;
-
-    int min_cost = INT_MAX;
-    int rr_count = cost_a_up < cost_b_up ? cost_a_up : cost_b_up;
-    int remaining_a = cost_a_up - rr_count;
-    int remaining_b = cost_b_up - rr_count;
-    int cost_rr = rr_count + remaining_a + remaining_b;
-    if (cost_rr < min_cost) min_cost = cost_rr;
-
-    int rrr_count = cost_a_down < cost_b_down ? cost_a_down : cost_b_down;
-    remaining_a = cost_a_down - rrr_count;
-    remaining_b = cost_b_down - rrr_count;
-    int cost_rrr = rrr_count + remaining_a + remaining_b;
-    if (cost_rrr < min_cost) min_cost = cost_rrr;
-
-    int cost_ra_rrb = cost_a_up + cost_b_down;
-    if (cost_ra_rrb < min_cost) min_cost = cost_ra_rrb;
-
-    int cost_rra_rb = cost_a_down + cost_b_up;
-    if (cost_rra_rb < min_cost) min_cost = cost_rra_rb;
-
-    return min_cost;
-}
-
-
 void rotate_to_top_both(t_stack *a, t_stack *b, int cheapest_index, int target_b) 
 {
     int cost_a_up = a->top - cheapest_index;
@@ -125,38 +94,29 @@ void rotate_to_top(t_stack *stack, int target_index, char stack_name)
 
 void turk_algorithm(t_stack *a, t_stack *b)
 {
-    int cheapest_index;
-    int min_index;
-    int size;
+	int cheapest_index;
+	int min_index;
 
-    if (control_before_algorithm(a, b))
-        return ;
-    size = a->top + 1;
-    pb(a, b);
-    if (a->top > 2)
-        pb(a, b);
+	if (control_before_algorithm(a, b))
+		return ;
+	pb(a, b);
+	if (a->top > 2)
+		pb(a, b);
 	if (b->top > 0 && b->data[b->top] < b->data[b->top - 1])
-        sb(b);
-
-    while (a->top > 2)
-    {
-        cheapest_index = find_cheapest_move(a, b);
-        execute_push_to_b(a, b, cheapest_index);
-    }
-
-    rotate_to_top(b, find_max_index(b), 'b');
-    sort_threesize_stack(a);
-	
-
-
-    while (b->top >= 0)
-    {
-        int target_a = find_position_in_a(a, b->data[b->top]);
+		sb(b);
+	while (a->top > 2)
+	{
+		cheapest_index = find_cheapest_move(a, b);
+		execute_push_to_b(a, b, cheapest_index);
+	}
+	rotate_to_top(b, find_max_index(b), 'b');
+	sort_threesize_stack(a);
+	while (b->top >= 0)
+	{
+		int target_a = find_position_in_a(a, b->data[b->top]);
 		rotate_to_top(a, target_a , 'a');
-        pa(a, b);
-    }
-    
-    min_index = find_min_index(a);
-    rotate_to_top(a, min_index, 'a');
-    
+    	pa(a, b);
+	}
+	min_index = find_min_index(a);
+	rotate_to_top(a, min_index, 'a');
 }

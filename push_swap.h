@@ -38,6 +38,9 @@ void	rrb(t_stack *stack_b);
 void	rrr(t_stack *stack_a, t_stack *stack_b);
 void	sort_threesize_stack(t_stack *stack_a);
 void	print_operation(char *op);
+void	print_error(t_stack *stack_a, t_stack *stack_b);
+void	free_and_exit(t_stack *stack_a, t_stack *stack_b);
+void	rotate_to_top_both(t_stack *a, t_stack *b, int cheapest_index, int target_b);
 
 int		find_min_index(t_stack *stack);
 int		find_max_index(t_stack *stack);
