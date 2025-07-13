@@ -25,3 +25,20 @@ void	free_and_exit(t_stack *stack_a, t_stack *stack_b)
 	exit(EXIT_SUCCESS);
 }
 
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
+{
+	unsigned char	*s1unsigned;
+	unsigned char	*s2unsigned;
+	size_t			i;
+
+	s1unsigned = (unsigned char *)s1;
+	s2unsigned = (unsigned char *)s2;
+	i = 0;
+	while (i < n && (s1[i] || s2[i]))
+	{
+		if (s1unsigned[i] != s2unsigned[i])
+			return (s1unsigned[i] - s2unsigned[i]);
+		i++;
+	}
+	return (0);
+}

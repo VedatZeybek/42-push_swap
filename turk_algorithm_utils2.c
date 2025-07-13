@@ -25,9 +25,15 @@ void sort_threesize_stack(t_stack *stack_a)
 	if (stack_a->top != 2)
 		return ;
 	if (stack_a->top == find_max_index(stack_a))
+	{
 		ra(stack_a);
+		print_operation("ra");
+	}
 	if (stack_a->top -1 == find_max_index(stack_a))
+	{
 		rra(stack_a);
+		print_operation("rra");
+	}	
 	if (stack_a->data[stack_a->top] > stack_a->data[stack_a->top - 1])
 		sa(stack_a);
 }
@@ -55,20 +61,6 @@ int find_cheapest_move(t_stack *a, t_stack *b)
 	i--;
 	}
 	return (cheapest_index);
-}
-
-int rotation_cost(t_stack *stack, int index)
-{
-	int size;
-	int cost_up;
-	int cost_down;
-
-	size = stack->top + 1;
-	cost_up = stack->top - index;
-	cost_down = index + 1;
-	if (cost_up <= cost_down)
-		return (cost_up);
-	return (cost_down);
 }
 
 void execute_push_to_b(t_stack *a, t_stack *b, int cheapest_index)

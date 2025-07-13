@@ -1,5 +1,7 @@
 {
 	"files.associations": {
-		"turk_algorithm_utils3c": "c"
+		"turk_algorithm_utils3c": "c",
+		"limits": "c",
+		"stdlib.h": "c"
 	}
 }
