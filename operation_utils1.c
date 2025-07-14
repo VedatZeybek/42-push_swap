@@ -36,8 +36,7 @@ void	pa(t_stack *stack_a, t_stack *stack_b)
 
 	value = pop_from_stack(stack_b);
 	push_to_stack(stack_a, value);
-	if (value != -1)
-		print_operation("pa");
+	print_operation("pa");
 }
 
 void	pb(t_stack *stack_a, t_stack *stack_b)
@@ -46,6 +45,5 @@ void	pb(t_stack *stack_a, t_stack *stack_b)
 
 	value = pop_from_stack(stack_a);
 	push_to_stack(stack_b, value);
-	if (value != -1)
-		print_operation("pb");
+	print_operation("pb");
 }

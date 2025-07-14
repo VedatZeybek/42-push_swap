@@ -28,6 +28,7 @@ void	ra_bonus(t_stack *stack_a);
 void	rb_bonus(t_stack *stack_b);
 void	rra_bonus(t_stack *stack_a);
 void	rrb_bonus(t_stack *stack_b);
+void	ss_bonus(t_stack *stack_a, t_stack *stack_b);
 
 char	*get_next_line(int fd);
 char	*ft_strjoin(char *s1, char *s2);

@@ -15,6 +15,8 @@ int	apply_operation(t_stack *a, t_stack *b, char *str)
 		sa_bonus(a);
 	else if (ft_strncmp(str, "sb\n", 3) == 0)
 		sb_bonus(b);
+	else if (ft_strncmp(str, "ss\n", 3) == 0)
+		ss_bonus(a, b);
 	else
 		return (0);
 	return (1);
@@ -29,12 +31,21 @@ int	get_inputs(t_stack *a, t_stack *b)
 	{
 		if (!apply_operation(a, b, inputs))
 		{
-			write(1, "Error\n", 6);
+			write(2, "Error\n", 6);
 			return (0);
 		}
+		free(inputs);
 		inputs = get_next_line(0);
 	}
 	return (1);
+}
+
+void	free_mallocated(t_stack *a, t_stack *b)
+{
+	free(a->data);
+	free(b->data);
+	free(a);
+	free(b);
 }
 
 int	main(int argc, char **argv)
@@ -48,7 +59,8 @@ int	main(int argc, char **argv)
 	data = parse_arguments(&data, argc, argv);
 	if (data == NULL)
 	{
-		write(1, "Error\n", 6);
+		free(data);
+		write(2, "Error\n", 6);
 		return (EXIT_FAILURE);
 	}
 	a = init_stack(data, argc - 1);
@@ -60,4 +72,5 @@ int	main(int argc, char **argv)
 		write(1, "OK\n", 3);
 	else
 		write(1, "KO\n", 3);
+	free_mallocated(a, b);
 }

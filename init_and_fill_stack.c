@@ -27,6 +27,30 @@ t_stack	*init_stack(int *data, int size)
 	return (stack);
 }
 
+static int	*duplicate_checker(int **data, int size)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < size)
+	{
+		j = i + 1;
+		while (j < size)
+		{
+			if ((*data)[i] == (*data)[j])
+			{
+				free(*data);
+				*data = NULL;
+				return (NULL);
+			}
+			j++;
+		}
+		i++;
+	}
+	return (*data);
+}
+
 static int	parse_number(char *str, long *num, int *sign, int *start)
 {
 	*num = 0;
@@ -62,30 +86,6 @@ static int	is_valid_number(char *str, long *result)
 	}
 	*result = num * sign;
 	return (1);
-}
-
-static int	*duplicate_checker(int **data, int size)
-{
-	int	i;
-	int	j;
-
-	i = 0;
-	while (i < size)
-	{
-		j = i + 1;
-		while (j < size)
-		{
-			if ((*data)[i] == (*data)[j])
-			{
-				free(*data);
-				*data = NULL;
-				return (NULL);
-			}
-			j++;
-		}
-		i++;
-	}
-	return (*data);
 }
 
 int	*parse_arguments(int **result, int argc, char **argv)

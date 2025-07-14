@@ -43,3 +43,9 @@ void	pb_bonus(t_stack *stack_a, t_stack *stack_b)
 	value = pop_from_stack(stack_a);
 	push_to_stack(stack_b, value);
 }
+
+void	ss_bonus(t_stack *stack_a, t_stack *stack_b)
+{
+	sa_bonus(stack_a);
+	sb_bonus(stack_b);
+}
