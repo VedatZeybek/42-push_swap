@@ -7,14 +7,13 @@ void	print_operation(char *op)
 	i = 0;
 	while (op[i])
 		i++;
-	
 	write(1, op, i);
 	write(1, "\n", 1);
 }
 
 void	print_error(t_stack *stack_a, t_stack *stack_b)
 {
-	write(2, "error\n", 6);
+	write(2, "Error\n", 6);
 	free(stack_a->data);
 	free(stack_b->data);
 	free(stack_a);

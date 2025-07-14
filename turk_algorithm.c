@@ -55,7 +55,7 @@ void turk_algorithm(t_stack *a, t_stack *b)
 	int cheapest_index;
 	int min_index;
 
-	if (control_before_algorithm(a, b))
+	if (control_before_algorithm(a))
 		return ;
 	pb(a, b);
 	if (a->top > 2)

@@ -16,7 +16,6 @@
 int main(int argc, char **argv)
 {
 	int		*data_a;
-	int		*data_b;
 	int		*temp;
 	t_stack	*stack_a;
 	t_stack	*stack_b;
@@ -25,8 +24,7 @@ int main(int argc, char **argv)
 		return (1);
 	data_a = parse_arguments(&data_a, argc, argv);
 	if (data_a == NULL)
-		write(2, "error\n", 6);
-	data_b = NULL;
+		write(2, "Error\n", 6);
 	temp = data_a;
 	stack_a = init_stack(data_a, argc - 1);
 	free(temp);

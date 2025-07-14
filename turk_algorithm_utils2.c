@@ -1,6 +1,6 @@
 #include "push_swap.h"
 
-int control_before_algorithm(t_stack *a, t_stack *b)
+int control_before_algorithm(t_stack *a)
 {
 	if (is_ordered(a) || a->top == 0)
 		return (1);

@@ -51,7 +51,7 @@ int		find_position_in_a(t_stack *a, int value);
 int		find_cheapest_move(t_stack *a, t_stack *b);
 int		is_ordered(t_stack *stack);
 int		calculate_move_cost(t_stack *a, t_stack *b, int a_index);
-int		control_before_algorithm(t_stack *a, t_stack *b);
+int		control_before_algorithm(t_stack *a);
 void	sort_threesize_stack(t_stack *stack_a);
 void	rotate_to_top(t_stack *stack, int target_index, char stack_name);
 void	execute_push_to_b(t_stack *a, t_stack *b, int cheapest_index);
