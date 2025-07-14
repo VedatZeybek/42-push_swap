@@ -3,7 +3,7 @@
 void	ra_bonus(t_stack *stack_a)
 {
 	int	i;
-	int temp;
+	int	temp;
 	int	temp2;
 	int	last_value;
 
@@ -15,7 +15,7 @@ void	ra_bonus(t_stack *stack_a)
 		while (i < stack_a->top)
 		{
 			temp2 = stack_a->data[i + 1];
-			stack_a->data[i + 1] = 	temp; 
+			stack_a->data[i + 1] = temp;
 			temp = temp2;
 			i++;
 		}
@@ -26,7 +26,7 @@ void	ra_bonus(t_stack *stack_a)
 void	rb_bonus(t_stack *stack_b)
 {
 	int	i;
-	int temp;
+	int	temp;
 	int	temp2;
 	int	last_value;
 
@@ -38,22 +38,21 @@ void	rb_bonus(t_stack *stack_b)
 		while (i < stack_b->top)
 		{
 			temp2 = stack_b->data[i + 1];
-			stack_b->data[i + 1] = 	temp; 
+			stack_b->data[i + 1] = temp;
 			temp = temp2;
 			i++;
 		}
 		stack_b->data[0] = last_value;
 	}
-
 }
 
 void	rra_bonus(t_stack *stack_a)
 {
 	int	i;
-	int temp;
+	int	temp;
 	int	temp2;
 	int	last_value;
-	
+
 	if (stack_a->top >= 1)
 	{
 		i = stack_a->top;
@@ -62,7 +61,7 @@ void	rra_bonus(t_stack *stack_a)
 		while (i > 0)
 		{
 			temp2 = stack_a->data[i - 1];
-			stack_a->data[i - 1] = 	temp; 
+			stack_a->data[i - 1] = temp;
 			temp = temp2;
 			i--;
 		}
@@ -73,10 +72,10 @@ void	rra_bonus(t_stack *stack_a)
 void	rrb_bonus(t_stack *stack_b)
 {
 	int	i;
-	int temp;
+	int	temp;
 	int	temp2;
 	int	last_value;
-	
+
 	if (stack_b->top >= 1)
 	{
 		i = stack_b->top;
@@ -85,7 +84,7 @@ void	rrb_bonus(t_stack *stack_b)
 		while (i > 0)
 		{
 			temp2 = stack_b->data[i - 1];
-			stack_b->data[i - 1] = 	temp; 
+			stack_b->data[i - 1] = temp;
 			temp = temp2;
 			i--;
 		}

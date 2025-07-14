@@ -1,5 +1,4 @@
 #include "push_swap_bonus.h"
-#include <stdio.h>
 
 int	apply_operation(t_stack *a, t_stack *b, char *str)
 {
@@ -25,31 +24,34 @@ int	get_inputs(t_stack *a, t_stack *b)
 {
 	char	*inputs;
 
-	while ((inputs = get_next_line(0)))
+	inputs = get_next_line(0);
+	while (inputs)
 	{
 		if (!apply_operation(a, b, inputs))
 		{
 			write(1, "Error\n", 6);
 			return (0);
 		}
+		inputs = get_next_line(0);
 	}
 	return (1);
 }
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
 	int		*data;
 	t_stack	*a;
 	t_stack	*b;
-	
+
 	if (argc == 1)
 		return (EXIT_SUCCESS);
-	if ((data = parse_arguments(&data, argc, argv)) == NULL)
+	data = parse_arguments(&data, argc, argv);
+	if (data == NULL)
 	{
 		write(1, "Error\n", 6);
 		return (EXIT_FAILURE);
 	}
-	a = init_stack(data, argc - 1);	
+	a = init_stack(data, argc - 1);
 	free(data);
 	b = init_stack(NULL, argc - 1);
 	if (!get_inputs(a, b))

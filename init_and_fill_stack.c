@@ -14,41 +14,45 @@ t_stack	*init_stack(int *data, int size)
 		free(stack);
 		return (NULL);
 	}
-	i = 0;
+	i = -1;
 	if (data)
 	{
-		while (i < size)
-		{
+		while (++i < size)
 			stack->data[i] = data[i];
-			i++;
-		}
 		stack->top = size - 1;
 	}
 	else
 		stack->top = -1;
 	stack->size = size;
-	return(stack);
+	return (stack);
 }
 
-static int is_valid_number(char *str, long *result)
+static int	parse_number(char *str, long *num, int *sign, int *start)
+{
+	*num = 0;
+	*sign = 1;
+	*start = 0;
+	if (!str[0])
+		return (0);
+	if (str[0] == '-')
+	{
+		*sign = -1;
+		(*start)++;
+	}
+	if (!str[*start])
+		return (0);
+	return (1);
+}
+
+static int	is_valid_number(char *str, long *result)
 {
 	long	num;
 	int		sign;
 	int		i;
 
-	num = 0;
-	sign = 1;
-	i = 0;
-	if (!str[0])
+	if (!parse_number(str, &num, &sign, &i))
 		return (0);
-	if (str[0] == '-')
-	{
-		sign = -1;
-		i++;
-	}
-	if (!str[i])
-		return (0);
-	while (str[i]) 
+	while (str[i])
 	{
 		if (str[i] < '0' || str[i] > '9')
 			return (0);
@@ -73,9 +77,9 @@ static int	*duplicate_checker(int **data, int size)
 		{
 			if ((*data)[i] == (*data)[j])
 			{
-                free(*data);
-                *data = NULL;
-                return (NULL);
+				free(*data);
+				*data = NULL;
+				return (NULL);
 			}
 			j++;
 		}
@@ -95,7 +99,7 @@ int	*parse_arguments(int **result, int argc, char **argv)
 	{
 		return (NULL);
 	}
-    while (i < argc - 1)
+	while (i < argc - 1)
 	{
 		if (!is_valid_number(argv[i + 1], &num))
 		{

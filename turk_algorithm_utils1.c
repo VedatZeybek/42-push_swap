@@ -1,9 +1,9 @@
 #include "push_swap.h"
 
-int find_min_index(t_stack *a)
+int	find_min_index(t_stack *a)
 {
-	int i;
-	int result;
+	int	i;
+	int	result;
 
 	if (a->top == -1)
 		return (-1);
@@ -18,10 +18,10 @@ int find_min_index(t_stack *a)
 	return (result);
 }
 
-int find_max_index(t_stack *a)
+int	find_max_index(t_stack *a)
 {
-	int i;
-	int result;
+	int	i;
+	int	result;
 
 	if (a->top == -1)
 		return (-1);
@@ -36,11 +36,11 @@ int find_max_index(t_stack *a)
 	return (result);
 }
 
-int find_position_in_b(t_stack *b, int value)
+int	find_position_in_b(t_stack *b, int value)
 {
-	int i;
+	int	i;
 	int	position;
-	int temp;
+	int	temp;
 
 	if (b->top == -1)
 		return (0);
@@ -62,14 +62,14 @@ int find_position_in_b(t_stack *b, int value)
 	return (position);
 }
 
-int find_position_in_a(t_stack *a, int value)
+int	find_position_in_a(t_stack *a, int value)
 {
-	int i;
+	int	i;
 	int	position;
-	int temp;
+	int	temp;
 
 	if (a->top == -1)
-	return (0);
+		return (0);
 	i = 0;
 	position = -1;
 	while (i <= a->top)
@@ -88,9 +88,9 @@ int find_position_in_a(t_stack *a, int value)
 	return (position);
 }
 
-int is_ordered(t_stack *stack)
+int	is_ordered(t_stack *stack)
 {
-	int i;
+	int	i;
 
 	if (stack->top <= 0)
 		return (1);

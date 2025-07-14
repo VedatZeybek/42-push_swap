@@ -2,7 +2,7 @@
 
 void	sa_bonus(t_stack *stack_a)
 {
-	int temp;
+	int	temp;
 	int	top_index;
 
 	top_index = stack_a->top;
@@ -16,7 +16,7 @@ void	sa_bonus(t_stack *stack_a)
 
 void	sb_bonus(t_stack *stack_b)
 {
-	int temp;
+	int	temp;
 	int	top_index;
 
 	top_index = stack_b->top;

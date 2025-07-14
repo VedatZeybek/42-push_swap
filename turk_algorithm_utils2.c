@@ -1,6 +1,6 @@
 #include "push_swap.h"
 
-int control_before_algorithm(t_stack *a)
+int	control_before_algorithm(t_stack *a)
 {
 	if (is_ordered(a) || a->top == 0)
 		return (1);
@@ -18,9 +18,9 @@ int control_before_algorithm(t_stack *a)
 	return (0);
 }
 
-void sort_threesize_stack(t_stack *stack_a)
-{	
-	if (stack_a->top < 1) 
+void	sort_threesize_stack(t_stack *stack_a)
+{
+	if (stack_a->top < 1)
 		return ;
 	if (stack_a->top != 2)
 		return ;
@@ -33,17 +33,17 @@ void sort_threesize_stack(t_stack *stack_a)
 	{
 		rra(stack_a);
 		print_operation("rra");
-	}	
+	}
 	if (stack_a->data[stack_a->top] > stack_a->data[stack_a->top - 1])
 		sa(stack_a);
 }
 
-int find_cheapest_move(t_stack *a, t_stack *b)
+int	find_cheapest_move(t_stack *a, t_stack *b)
 {
-	int min_cost;
-	int cheapest_index;
-	int i;
-	int current_cost;
+	int	min_cost;
+	int	cheapest_index;
+	int	i;
+	int	current_cost;
 
 	if (a->top == -1)
 		return (-1);
@@ -58,14 +58,14 @@ int find_cheapest_move(t_stack *a, t_stack *b)
 			min_cost = current_cost;
 			cheapest_index = i;
 		}
-	i--;
+		i--;
 	}
 	return (cheapest_index);
 }
 
-void execute_push_to_b(t_stack *a, t_stack *b, int cheapest_index)
+void	execute_push_to_b(t_stack *a, t_stack *b, int cheapest_index)
 {
-	int target_b;
+	int	target_b;
 
 	target_b = find_position_in_b(b, a->data[cheapest_index]);
 	rotate_to_top_both(a, b, cheapest_index, target_b);

@@ -1,28 +1,27 @@
-#ifndef PUSH_SWAP
-#define PUSH_SWAP
+#ifndef PUSH_SWAP_H
+# define PUSH_SWAP_H
 
-#include "stdlib.h"
-#include <unistd.h>
+# include "stdlib.h"
+# include <unistd.h>
 
-#define INT_MAX 2147483647
-#define INT_MIN -2147483648
+# define INT_MAX 2147483647
+# define INT_MIN -2147483648
 
-typedef struct s_stack 
+typedef struct s_stack
 {
 	int	*data;
 	int	size;
 	int	top;
-} t_stack;
+}	t_stack;
 
 typedef struct s_move
 {
-	int cost;
-	int ra;
-	int rb;
-	int rra;
-	int rrb;
-} t_move;
-
+	int	cost;
+	int	ra;
+	int	rb;
+	int	rra;
+	int	rrb;
+}	t_move;
 
 t_stack	*init_stack(int *data, int size);
 int		is_empty(t_stack *stack);
@@ -56,6 +55,7 @@ void	sort_threesize_stack(t_stack *stack_a);
 void	rotate_to_top(t_stack *stack, int target_index, char stack_name);
 void	execute_push_to_b(t_stack *a, t_stack *b, int cheapest_index);
 void	turk_algorithm(t_stack *a, t_stack *b);
-void	rotate_to_top_both(t_stack *a, t_stack *b, int cheapest_index, int target_b);
+void	rotate_to_top_both(t_stack *a, t_stack *b,
+			int cheapest_index, int target_b);
 
 #endif

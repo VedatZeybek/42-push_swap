@@ -2,7 +2,7 @@
 
 void	sa(t_stack *stack_a)
 {
-	int temp;
+	int	temp;
 	int	top_index;
 
 	top_index = stack_a->top;
@@ -17,7 +17,7 @@ void	sa(t_stack *stack_a)
 
 void	sb(t_stack *stack_b)
 {
-	int temp;
+	int	temp;
 	int	top_index;
 
 	top_index = stack_b->top;
@@ -27,7 +27,6 @@ void	sb(t_stack *stack_b)
 		stack_b->data[top_index] = stack_b->data[top_index - 1];
 		stack_b->data[top_index - 1] = temp;
 		print_operation("sb");
-
 	}
 }
 
@@ -39,7 +38,6 @@ void	pa(t_stack *stack_a, t_stack *stack_b)
 	push_to_stack(stack_a, value);
 	if (value != -1)
 		print_operation("pa");
-
 }
 
 void	pb(t_stack *stack_a, t_stack *stack_b)
