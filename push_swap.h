@@ -3,6 +3,7 @@
 
 # include "stdlib.h"
 # include <unistd.h>
+# include "./libft/libft.h"
 
 # define INT_MAX 2147483647
 # define INT_MIN -2147483648
@@ -28,7 +29,7 @@ int		is_empty(t_stack *stack);
 int		is_full(t_stack *stack);
 int		push_to_stack(t_stack *stack, int value);
 int		pop_from_stack(t_stack *stack);
-int		*parse_arguments(int **result, int argc, char **argv);
+int		*parse_arguments(int argc, char **argv, int *out_size);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 void	sa(t_stack *stack_a);
 void	sb(t_stack *stack_b);
@@ -42,6 +43,7 @@ void	rotate(t_stack *stack_a, t_stack *stack_b, char *name);
 void	print_operation(char *op);
 void	print_error(t_stack *stack_a, t_stack *stack_b);
 void	free_and_exit(t_stack *stack_a, t_stack *stack_b);
+void	free_split(char **str);
 
 int		find_min_index(t_stack *stack);
 int		find_max_index(t_stack *stack);

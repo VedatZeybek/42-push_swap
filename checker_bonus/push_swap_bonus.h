@@ -31,8 +31,5 @@ void	rrb_bonus(t_stack *stack_b);
 void	ss_bonus(t_stack *stack_a, t_stack *stack_b);
 
 char	*get_next_line(int fd);
-char	*ft_strjoin(char *s1, char *s2);
-char	*ft_substr(char *s, unsigned int start, size_t len);
-size_t	ft_strlen(char *s);
 
 #endif

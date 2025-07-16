@@ -30,6 +30,16 @@ void	free_and_exit(t_stack *stack_a, t_stack *stack_b)
 	exit(EXIT_SUCCESS);
 }
 
+void	free_split(char **str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+		free(str[i++]);
+	free(str);
+}
+
 int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
 	unsigned char	*s1unsigned;

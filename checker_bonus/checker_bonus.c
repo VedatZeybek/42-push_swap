@@ -51,21 +51,22 @@ void	free_mallocated(t_stack *a, t_stack *b)
 int	main(int argc, char **argv)
 {
 	int		*data;
+	int		count;
 	t_stack	*a;
 	t_stack	*b;
 
 	if (argc == 1)
 		return (EXIT_SUCCESS);
-	data = parse_arguments(&data, argc, argv);
+	data = parse_arguments(argc, argv, &count);
 	if (data == NULL)
 	{
 		free(data);
 		write(2, "Error\n", 6);
 		return (EXIT_FAILURE);
 	}
-	a = init_stack(data, argc - 1);
+	a = init_stack(data, count);
 	free(data);
-	b = init_stack(NULL, argc - 1);
+	b = init_stack(NULL, count);
 	if (!get_inputs(a, b))
 		return (EXIT_FAILURE);
 	if (is_ordered(a) && is_empty(b))
