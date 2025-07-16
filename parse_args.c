@@ -1,16 +1,11 @@
 #include "push_swap.h"
 
-static int	count_words(char **words)
-{
-	int	count = 0;
-	while (words && words[count])
-		count++;
-	return (count);
-}
-
 static int	has_duplicate(int *arr, int size)
 {
-	int	i = 0, j;
+	int	i;
+	int	j;
+
+	i = 0;
 	while (i < size - 1)
 	{
 		j = i + 1;
@@ -25,20 +20,30 @@ static int	has_duplicate(int *arr, int size)
 	return (0);
 }
 
-static int	is_valid_number(char *str, long *result)
+static int	parse_sign_and_check_empty(char *str, int *sign, int *index)
 {
-	long	num = 0;
-	int		sign = 1;
-	int		i = 0;
-
+	*sign = 1;
+	*index = 0;
 	if (!str[0])
 		return (0);
 	if (str[0] == '-')
 	{
-		sign = -1;
-		i++;
+		*sign = -1;
+		(*index)++;
 	}
-	if (!str[i])
+	if (!str[*index])
+		return (0);
+	return (1);
+}
+
+static int	is_valid_number(char *str, long *result)
+{
+	long	num;
+	int		sign;
+	int		i;
+
+	num = 0;
+	if (!parse_sign_and_check_empty(str, &sign, &i))
 		return (0);
 	while (str[i])
 	{
@@ -88,8 +93,6 @@ int	*parse_arguments(int argc, char **argv, int *out_size)
 	int		i;
 	int		count;
 
-	if (argc < 2)
-		return (NULL);
 	args = combine_and_split(argc, argv);
 	count = count_words(args);
 	if (!args || count == 0)
@@ -103,7 +106,7 @@ int	*parse_arguments(int argc, char **argv, int *out_size)
 	{
 		if (!is_valid_number(args[i], &num))
 			return (free_split(args), free(numbers), NULL);
-		numbers[count -1 -i] = (int)num;
+		numbers[count - 1 - i] = (int)num;
 	}
 	if (has_duplicate(numbers, count))
 		return (free_split(args), free(numbers), NULL);

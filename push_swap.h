@@ -30,7 +30,7 @@ int		is_full(t_stack *stack);
 int		push_to_stack(t_stack *stack, int value);
 int		pop_from_stack(t_stack *stack);
 int		*parse_arguments(int argc, char **argv, int *out_size);
-int		ft_strncmp(const char *s1, const char *s2, size_t n);
+int		count_words(char **words);
 void	sa(t_stack *stack_a);
 void	sb(t_stack *stack_b);
 void	pa(t_stack *stack_a, t_stack *stack_b);

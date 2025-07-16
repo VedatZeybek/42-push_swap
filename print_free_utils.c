@@ -40,20 +40,12 @@ void	free_split(char **str)
 	free(str);
 }
 
-int	ft_strncmp(const char *s1, const char *s2, size_t n)
+int	count_words(char **words)
 {
-	unsigned char	*s1unsigned;
-	unsigned char	*s2unsigned;
-	size_t			i;
+	int	count;
 
-	s1unsigned = (unsigned char *)s1;
-	s2unsigned = (unsigned char *)s2;
-	i = 0;
-	while (i < n && (s1[i] || s2[i]))
-	{
-		if (s1unsigned[i] != s2unsigned[i])
-			return (s1unsigned[i] - s2unsigned[i]);
-		i++;
-	}
-	return (0);
+	count = 0;
+	while (words && words[count])
+		count++;
+	return (count);
 }
